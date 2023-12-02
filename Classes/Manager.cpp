@@ -5,4 +5,5 @@
  * @details Time complexity: O(1)
  */
 Manager::Manager() {
+
 }

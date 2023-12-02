@@ -25,4 +25,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(AED2324_PRJ2_G22 main.cpp
         Classes/Manager.cpp
-        Classes/App.cpp)
+        Classes/App.cpp
+        Classes/Graph.h
+        Classes/Airline.cpp
+)
