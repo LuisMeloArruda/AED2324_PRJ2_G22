@@ -28,4 +28,5 @@ add_executable(AED2324_PRJ2_G22 main.cpp
         Classes/App.cpp
         Classes/Graph.h
         Classes/Airline.cpp
+        Classes/Airport.cpp
 )
