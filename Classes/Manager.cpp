@@ -66,8 +66,11 @@ void Manager::readAirports() {
 
         Airport temp = Airport(code, name, city, country, latitude, longitude);
 
-        network.addVertex(temp);
+        if (!network.addVertex(temp)) {
+            cout << "SOMETHING WENT WRONG WITH AIRPORT WITH CODE " << code << endl;
+        }
     }
+
 }
 
 void Manager::readFlights() {
@@ -92,7 +95,10 @@ void Manager::readFlights() {
         Airport targetAirport = Airport(target);
         int weight = airline[0] + airline[1] + airline[2];
 
-        network.addEdge(sourceAirport, targetAirport, weight);
+       if(!network.addEdge(sourceAirport, targetAirport, weight)) {
+           cout << "SOMETHING WENT WRONG ADDING EDGE FROM AIRPORT " << source << " TO AIRPORT " << target << endl;
+       }
+
     }
 }
 

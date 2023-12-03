@@ -63,7 +63,6 @@ void Airport::setLongitude(double longitude) {
 
 bool Airport::operator==(const Airport& b) const {
     if (this->code == b.code ||
-        this->name == b.name ||
         (this->latitude == b.latitude and this->longitude == b.longitude))
         return true;
     return false;
