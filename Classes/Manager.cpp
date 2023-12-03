@@ -149,3 +149,15 @@ void Manager::getFlightsInCity(string city) const {
     cout << "INFORMATION REGARDING " << city << endl;
     cout << "NUMBER OF FLIGHTS THAT PASS TROUGH IT: " << count << endl;
 }
+
+void Manager::getFlightsOfAirline(string airline) const {
+    int count = 0;
+    for (Vertex<Airport>* airport : network.getVertexSet()) {
+        for (Edge<Airport> edge : airport->getAdj()) {
+            if (edge.getAirline() == airline) count++;
+        }
+    }
+
+    cout << "INFORMATION REGARDING AIRLINE " << airline << endl;
+    cout << "NUMBER OF FLIGHTS PROVIDE BY IT: " << count << endl;
+}
