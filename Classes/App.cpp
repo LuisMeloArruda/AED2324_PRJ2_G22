@@ -56,11 +56,12 @@ bool App::statistics() const {
             "\n2. Number of flights out of an airport"
             "\n3. Number of flights per city"
             "\n4. Number of flights of airline"
+            "\n5. Number of countries an airport flies to"
             "\nYour option:";
     cin >> choice;
 
     // Check if option is valid
-    while(!isValidOption(choice, 4)) {
+    while(!isValidOption(choice, 5)) {
         cin >> choice;
     }
 
@@ -80,6 +81,8 @@ bool App::statistics() const {
         case 4:
             checkFlightsOfAirline();
             break;
+        case 5:
+            checkCountriesAirport();
     }
     return (choice == 0);
 }
@@ -113,6 +116,15 @@ void App::checkFlightsOfAirline() const {
     cin >> airline;
 
     information.getFlightsOfAirline(airline);
+}
+
+void App::checkCountriesAirport() const {
+    cout << "Please insert wanted Airport code:";
+    string code;
+    cin >> code;
+    Airport temp = Airport(code);
+
+    information.getCountriesAirport(temp);
 }
 
 /**
