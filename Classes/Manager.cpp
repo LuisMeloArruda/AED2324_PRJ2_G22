@@ -194,3 +194,32 @@ void Manager::getCountriesCity(string city) const {
     cout << "INFORMATION REGARDING " << city << endl;
     cout << "NUMBER OF COUNTRIES IT HAS FLIGHTS TO: " << count << endl;
 }
+
+void Manager::getDestinations(Airport airport) const {
+    Vertex<Airport>* airportPtr = network.findVertex(airport);
+    if (airportPtr == NULL) {
+        cout << "Airport Code not found/valid" << endl;
+        return;
+    }
+
+    unordered_set<string> airports;
+    unordered_set<string> cities;
+    unordered_set<string> countries;
+    int airportCount = 0, cityCount = 0, countryCount = 0;
+
+    for (Edge<Airport> edge : airportPtr->getAdj()) {
+        auto airportIt = airports.insert(edge.getDest()->getInfo().getCode());
+        auto cityIt = cities.insert(edge.getDest()->getInfo().getCity());
+        auto countryIt = countries.insert(edge.getDest()->getInfo().getCountry());
+
+        if(airportIt.second) airportCount++;
+        if(cityIt.second) cityCount++;
+        if(countryIt.second) countryCount++;
+    }
+
+    cout << "INFORMATION REGARDING AIRPORT " << airportPtr->getInfo().getName()
+         << " WITH CODE " << airportPtr->getInfo().getCode() << endl;
+    cout << "NUMBER OF DESTINATION AIRPORTS: " << airportCount << endl;
+    cout << "NUMBER OF DESTINATION CITIES: " << cityCount << endl;
+    cout << "NUMBER OF DESTINATION COUNTRIES: " << countryCount  << endl;
+}

@@ -26,6 +26,7 @@ public:
     void getFlightsOfAirline(string airline) const;
     void getCountriesAirport(Airport airport) const;
     void getCountriesCity(string city) const;
+    void getDestinations(Airport airport) const;
 
     // Auxiliary Functions
     void readAirlines();
