@@ -25,12 +25,12 @@ public:
     void getFlightsInCity(string city) const;
     void getFlightsOfAirline(string airline) const;
     void getCountriesAirport(Airport airport) const;
+    void getCountriesCity(string city) const;
 
     // Auxiliary Functions
     void readAirlines();
     void readAirports();
     void readFlights();
-
 };
 
 #endif //AED2324_PRJ2_G22_MANAGER_H
