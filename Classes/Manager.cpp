@@ -1,4 +1,3 @@
-#include <sstream>
 #include "Manager.h"
 
 /**
@@ -93,9 +92,8 @@ void Manager::readFlights() {
 
         Airport sourceAirport = Airport(source);
         Airport targetAirport = Airport(target);
-        int weight = airline[0] + airline[1] + airline[2];
 
-       if(!network.addEdge(sourceAirport, targetAirport, weight)) {
+       if(!network.addEdge(sourceAirport, targetAirport, airline)) {
            cout << "SOMETHING WENT WRONG ADDING EDGE FROM AIRPORT " << source << " TO AIRPORT " << target << endl;
        }
 
@@ -112,4 +110,23 @@ int Manager::getGlobalFlightNumber() const {
         count += airport->getAdj().size();
     }
     return count;
+}
+
+void Manager::getOutFlights(Airport airport) const {
+    Vertex<Airport>* airportPtr = network.findVertex(airport);
+    if (airportPtr == NULL) {
+        cout << "Airport Code not found/valid" << endl;
+        return;
+    }
+    unordered_set<string> airlineSet;
+    int count = 0;
+    for (Edge<Airport> edge : airportPtr->getAdj()) {
+        auto it = airlineSet.insert(edge.getAirline());
+        if (it.second) count++;
+    }
+
+    cout << "INFORMATION REGARDING AIRPORT " << airportPtr->getInfo().getName()
+    << " WITH CODE " << airportPtr->getInfo().getCode() << endl;
+    cout << "NUMBER OF FLIGHTS OUT: " << airportPtr->getAdj().size() << endl;
+    cout << "FROM " << count << " DIFFERENT AIRLINES" << endl;
 }

@@ -4,6 +4,8 @@
 #include <set>
 #include <fstream>
 #include <iostream>
+#include <sstream>
+#include <unordered_set>
 #include "Airline.h"
 #include "Airport.h"
 #include "Graph.h"
@@ -19,6 +21,7 @@ public:
     // Lookup Functions
     int getAirportNumber() const;
     int getGlobalFlightNumber() const;
+    void getOutFlights(Airport airport) const;
 
     // Auxiliary Functions
     void readAirlines();
