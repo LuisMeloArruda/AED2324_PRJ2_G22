@@ -12,10 +12,15 @@ public:
 
     // Display functions
     void run();
+    static int menu();
+    bool statistics() const;
 
     // Lookup functions
+    void checkGlobal() const;
 
     // Auxiliary Functions
+    static bool isValidOption(int choice, int numberOfOptions);
+    static bool continueQuestion();
 
 private:
     /** @brief Extractor object which keeps all students, schedules, requests and their functions */

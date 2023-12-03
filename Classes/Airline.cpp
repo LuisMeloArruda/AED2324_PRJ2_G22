@@ -38,3 +38,7 @@ string Airline::getCountry() const {
 void Airline::setCountry(string country) {
     this->country = country;
 }
+
+bool Airline::operator<(const Airline& b) const {
+    return this->code < b.code;
+}

@@ -15,6 +15,7 @@ private:
     double longitude;
 public:
     Airport(string code, string name, string city, string country, double latitude, double longitude);
+    Airport(string code);
     string getCode() const;
     void setCode(string code);
     string getName() const;
@@ -27,6 +28,7 @@ public:
     void setLatitude(double latitude);
     double getLongitude() const;
     void setLongitude(double longitude);
+    bool operator==(const Airport& b) const;
 };
 
 #endif //AED2324_PRJ2_G22_AIRPORT_H

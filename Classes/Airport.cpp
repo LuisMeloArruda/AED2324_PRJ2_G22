@@ -9,6 +9,10 @@ Airport::Airport(string code, string name, string city, string country, double l
     this->longitude = longitude;
 }
 
+Airport::Airport(string code) {
+    this->code = code;
+}
+
 string Airport::getCode() const {
     return code;
 }
@@ -55,4 +59,12 @@ double Airport::getLongitude() const {
 
 void Airport::setLongitude(double longitude) {
     this->longitude = longitude;
+}
+
+bool Airport::operator==(const Airport& b) const {
+    if (this->code == b.code ||
+        this->name == b.name ||
+        (this->latitude == b.latitude and this->longitude == b.longitude))
+        return true;
+    return false;
 }

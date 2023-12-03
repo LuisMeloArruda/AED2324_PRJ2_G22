@@ -21,6 +21,7 @@ public:
     void setCallSign(string callSign);
     string getCountry() const;
     void setCountry(string country);
+    bool operator<(const Airline& b) const;
 };
 
 #endif //AED2324_PRJ2_G22_AIRLINE_H

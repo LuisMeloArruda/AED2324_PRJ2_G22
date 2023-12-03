@@ -1,17 +1,29 @@
 #ifndef AED2324_PRJ2_G22_MANAGER_H
 #define AED2324_PRJ2_G22_MANAGER_H
 
+#include <set>
+#include <fstream>
+#include <iostream>
+#include "Airline.h"
+#include "Airport.h"
+#include "Graph.h"
+
 class Manager {
 private:
-
+    set<Airline> airlines;
+    Graph<Airport> network;
 public:
     Manager();
-    //void readFiles();
+    void readFiles();
 
     // Lookup Functions
+    int getAirportNumber() const;
+    int getGlobalFlightNumber() const;
 
     // Auxiliary Functions
-
+    void readAirlines();
+    void readAirports();
+    void readFlights();
 };
 
 #endif //AED2324_PRJ2_G22_MANAGER_H
