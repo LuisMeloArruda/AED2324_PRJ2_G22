@@ -18,6 +18,7 @@ public:
     // Lookup functions
     void checkGlobal() const;
     void checkOutFlights() const;
+    void checkFlightsInCity() const;
 
     // Auxiliary Functions
     static bool isValidOption(int choice, int numberOfOptions);

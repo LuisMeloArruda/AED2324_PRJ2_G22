@@ -130,3 +130,22 @@ void Manager::getOutFlights(Airport airport) const {
     cout << "NUMBER OF FLIGHTS OUT: " << airportPtr->getAdj().size() << endl;
     cout << "FROM " << count << " DIFFERENT AIRLINES" << endl;
 }
+
+void Manager::getFlightsInCity(string city) const {
+    int count = 0;
+    for (Vertex<Airport>* airport : network.getVertexSet()) {
+        // If airport is outside target city then we only count flights that go into target city
+        if (airport->getInfo().getCity() != city) {
+            for (Edge<Airport> edge : airport->getAdj()) {
+                if (edge.getDest()->getInfo().getCity() != city) continue;
+                count++;
+            }
+            continue;
+        }
+        // Else then airport is inside the city and we count all its flights
+        count += airport->getAdj().size();
+    }
+
+    cout << "INFORMATION REGARDING " << city << endl;
+    cout << "NUMBER OF FLIGHTS THAT PASS TROUGH IT: " << count << endl;
+}

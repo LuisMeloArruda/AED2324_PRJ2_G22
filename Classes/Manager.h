@@ -22,6 +22,7 @@ public:
     int getAirportNumber() const;
     int getGlobalFlightNumber() const;
     void getOutFlights(Airport airport) const;
+    void getFlightsInCity(string city) const;
 
     // Auxiliary Functions
     void readAirlines();
