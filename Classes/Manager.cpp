@@ -251,3 +251,61 @@ void Manager::getTopKAirport(const int& K) const {
              << " -  Number of flights: " << flightCount << endl;
     }
 }
+
+
+void Manager::getReachableDestinations(const Airport& startAirport, int maxStops) const {
+    // Find the starting vertex in the graph using the provided airport information
+    Vertex<Airport>* startVertex = network.findVertex(startAirport);
+
+    // Check if the starting airport is found in the graph
+    if (startVertex == nullptr) {
+        cout << "Airport Code not found/valid" << endl;
+        return;
+    }
+
+    // Initialize sets to keep track of visited airports, cities, and countries
+    unordered_set<string> visitedAirports;
+    unordered_set<string> visitedCities;
+    unordered_set<string> visitedCountries;
+
+    // Perform DFS to find reachable destinations with the given maximum stops
+    dfsReachableDestinations(startVertex, maxStops, 0, visitedAirports, visitedCities, visitedCountries);
+
+    // Display the results
+    cout << "Reachable destinations from "
+         << startAirport.getCode()
+         << " with a maximum of "
+         << maxStops << " stop(s):" << endl;
+
+    cout << "Airports: " << visitedAirports.size() << endl;
+    cout << "Cities: " << visitedCities.size() << endl;
+    cout << "Countries: " << visitedCountries.size() << endl;
+}
+
+void Manager::dfsReachableDestinations(Vertex<Airport>* currentVertex,
+                                       int maxStops, int currentStops,
+                                       unordered_set<string>& visitedAirports,
+                                       unordered_set<string>& visitedCities,
+                                       unordered_set<string>& visitedCountries) const {
+
+    // Mark the current airport, city, and country as visited
+    visitedAirports.insert(currentVertex->getInfo().getCode());
+    visitedCities.insert(currentVertex->getInfo().getCity());
+    visitedCountries.insert(currentVertex->getInfo().getCountry());
+
+    // Base case: If the maximum stops are reached, stop the recursion
+    if (currentStops == maxStops) {
+        return;
+    }
+
+    // Explore neighboring airports recursively
+    for (const Edge<Airport>& edge : currentVertex->getAdj()) {
+        Vertex<Airport>* neighborVertex = edge.getDest();
+
+        // Check if the neighbor airport is not visited to avoid cycles
+        if (visitedAirports.find(neighborVertex->getInfo().getCode()) == visitedAirports.end()) {
+            dfsReachableDestinations(neighborVertex, maxStops, currentStops + 1,
+                                     visitedAirports, visitedCities, visitedCountries);
+        }
+    }
+}

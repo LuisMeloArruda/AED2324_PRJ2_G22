@@ -60,12 +60,13 @@ bool App::statistics() const {
             "\n6. Number of countries a city has flights to"
             "\n7. Number of destinations of an airport"
             "\n8. Top-k airport with the greatest air traffic capacity"
+            "\n9. Number of reachable airports given the number of stops"
             "\nYour option:";
     cin >> choice;
     cout << endl;
 
     // Check if option is valid
-    while(!isValidOption(choice, 8)) {
+    while(!isValidOption(choice, 9)) {
         cin >> choice;
     }
 
@@ -96,6 +97,9 @@ bool App::statistics() const {
             break;
         case 8:
             checkTopKAirport();
+            break;
+        case 9:
+            checkReachableDestinations();
             break;
     }
     return (choice == 0);
@@ -169,6 +173,17 @@ void App::checkTopKAirport() const {
     if (K > 0) {
         information.getTopKAirport(K);
     }
+};
+
+void App::checkReachableDestinations() const {
+    cout << "Please insert wanted Airport code:";
+    string code;
+    cin >> code;
+    Airport temp = Airport(code);
+    cout << "Please insert the number of stops:";
+    int stops;
+    cin >> stops;
+    information.getReachableDestinations(temp, stops);
 };
 
 /**

@@ -29,10 +29,19 @@ public:
     void getCountriesCity(string city) const;
     void getDestinations(Airport airport) const;
     void getTopKAirport(const int& K) const;
+    void getReachableDestinations(const Airport &startAirport, int maxStops) const;
+    void dfsReachableDestinations(
+            Vertex<Airport>* currentVertex,
+            int maxStops, int currentStops,
+            unordered_set<string>& visitedAirports,
+            unordered_set<string>& visitedCities,
+            unordered_set<string>& visitedCountries
+    ) const;
 
     // Auxiliary Functions
     void readAirlines();
     void readAirports();
+
     void readFlights();
 };
 

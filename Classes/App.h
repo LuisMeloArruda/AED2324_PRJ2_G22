@@ -24,6 +24,8 @@ public:
     void checkCountriesCity() const;
     void checkDestinations() const;
     void checkTopKAirport() const;
+    void checkReachableDestinations() const;
+
 
     // Auxiliary Functions
     static bool isValidOption(int choice, int numberOfOptions);
@@ -32,6 +34,7 @@ public:
 private:
     /** @brief Extractor object which keeps all students, schedules, requests and their functions */
     Manager information;
+
 };
 
 #endif //AED2324_PRJ1_G22_APP_H
