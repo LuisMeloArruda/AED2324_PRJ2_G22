@@ -59,12 +59,13 @@ bool App::statistics() const {
             "\n5. Number of countries an airport flies to"
             "\n6. Number of countries a city has flights to"
             "\n7. Number of destinations of an airport"
+            "\n8. Top-k airport with the greatest air traffic capacity"
             "\nYour option:";
     cin >> choice;
     cout << endl;
 
     // Check if option is valid
-    while(!isValidOption(choice, 7)) {
+    while(!isValidOption(choice, 8)) {
         cin >> choice;
     }
 
@@ -92,6 +93,9 @@ bool App::statistics() const {
             break;
         case 7:
             checkDestinations();
+            break;
+        case 8:
+            checkTopKAirport();
             break;
     }
     return (choice == 0);
@@ -153,6 +157,19 @@ void App::checkDestinations() const {
 
     information.getDestinations(temp);
 }
+
+void App::checkTopKAirport() const {
+    cout << "How many top airports do you want to retrieve? \n";
+    int K;
+    cin >> K;
+    while (K <= 0) {
+        cout << "The number needs to be higher than zero. Try again: \n";
+        cin >> K;
+    }
+    if (K > 0) {
+        information.getTopKAirport(K);
+    }
+};
 
 /**
  * @brief Method to test if the given input is within the range of possibilities

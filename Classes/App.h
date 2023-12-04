@@ -23,6 +23,7 @@ public:
     void checkCountriesAirport() const;
     void checkCountriesCity() const;
     void checkDestinations() const;
+    void checkTopKAirport() const;
 
     // Auxiliary Functions
     static bool isValidOption(int choice, int numberOfOptions);

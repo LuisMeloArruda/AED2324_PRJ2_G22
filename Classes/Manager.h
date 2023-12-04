@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 #include <unordered_set>
 #include "Airline.h"
 #include "Airport.h"
@@ -27,6 +28,7 @@ public:
     void getCountriesAirport(Airport airport) const;
     void getCountriesCity(string city) const;
     void getDestinations(Airport airport) const;
+    void getTopKAirport(const int& K) const;
 
     // Auxiliary Functions
     void readAirlines();

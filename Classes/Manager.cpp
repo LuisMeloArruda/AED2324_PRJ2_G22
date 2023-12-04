@@ -223,3 +223,31 @@ void Manager::getDestinations(Airport airport) const {
     cout << "NUMBER OF DESTINATION CITIES: " << cityCount << endl;
     cout << "NUMBER OF DESTINATION COUNTRIES: " << countryCount  << endl;
 }
+
+void Manager::getTopKAirport(const int& K) const {
+    // Create a vector to store airports and their flight counts
+    vector<pair<Vertex<Airport>*, int>> airportFlightsCount;
+
+    // Iterate over all airports and count their total flights
+    for (Vertex<Airport>* airport : network.getVertexSet()) {
+        int flightCount = airport->getAdj().size();
+        airportFlightsCount.push_back({airport, flightCount});
+    }
+
+    // Sort the vector based on flight counts in descending order
+    sort(airportFlightsCount.begin(), airportFlightsCount.end(),
+         [](const auto& a, const auto& b) {
+             return a.second > b.second;
+         });
+
+    // Display the top K airports
+    cout << "Top " << K << " Airports based on Flight Counts:\n";
+    for (int i = 0; i < min(K, static_cast<int>(airportFlightsCount.size())); ++i) {
+        Vertex<Airport>* airport = airportFlightsCount[i].first;
+        int flightCount = airportFlightsCount[i].second;
+
+        cout << i+1 << ". " << airport->getInfo().getName()
+             << " (" << airport->getInfo().getCode() << ") "
+             << " -  Number of flights: " << flightCount << endl;
+    }
+}
