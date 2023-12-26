@@ -60,7 +60,8 @@ bool App::statistics() const {
             "\n6. Number of countries a city has flights to"
             "\n7. Number of destinations of an airport"
             "\n8. Number of reachable airports given the number of stops"
-            "\n9. Top-k airport with the greatest air traffic capacity"
+            "\n9. Maximum distance (maximum number of lay-overs) between two airports"
+            "\n10. Top-k airport with the greatest air traffic capacity"
             "\nYour option:";
     cin >> choice;
     cout << endl;
@@ -99,6 +100,9 @@ bool App::statistics() const {
             checkReachableDestinations();
             break;
         case 9:
+            checkDiameter();
+            break;
+        case 10:
             checkTopKAirport();
             break;
     }
@@ -172,6 +176,11 @@ void App::checkReachableDestinations() const {
     cin >> stops;
     information.getReachableDestinations(temp, stops);
 };
+
+void App::checkDiameter() const {
+    cout << "Searching the network" << endl;
+    information.getDiameterPairs();
+}
 
 void App::checkTopKAirport() const {
     cout << "How many top airports do you want to retrieve? \n";

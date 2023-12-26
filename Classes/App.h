@@ -24,6 +24,7 @@ public:
     void checkCountriesCity() const;
     void checkDestinations() const;
     void checkReachableDestinations() const;
+    void checkDiameter() const;
     void checkTopKAirport() const;
 
 

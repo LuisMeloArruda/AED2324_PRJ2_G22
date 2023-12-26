@@ -2,6 +2,7 @@
 #define AED2324_PRJ2_G22_MANAGER_H
 
 #include <set>
+#include <list>
 #include <queue>
 #include <fstream>
 #include <iostream>
@@ -37,12 +38,14 @@ public:
             unordered_set<string>& visitedCities,
             unordered_set<string>& visitedCountries
     ) const;*/
+    void getDiameterPairs() const;
     void getTopKAirport(const int& K) const;
 
     // Auxiliary Functions
     void readAirlines();
     void readAirports();
     void readFlights();
+    int getMaximumDistance(Vertex<Airport>* sourceVertex, list<pair<string, string>>& trips) const;
 };
 
 #endif //AED2324_PRJ2_G22_MANAGER_H

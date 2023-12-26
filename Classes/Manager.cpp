@@ -247,7 +247,7 @@ void Manager::getReachableDestinations(const Airport &startAirport, int stops) c
             vertexToVisit.pop();
             continue;
         }
-        // Add to visited sets and remove node from queue
+        // Mark node as visited and add to visited sets
         vertexToVisit.front().first->setVisited(true);
         visitedAirports.insert(currentVertex->getInfo().getCode());
         visitedCities.insert(currentVertex->getInfo().getCity());
@@ -336,6 +336,71 @@ void Manager::dfsReachableDestinations(Vertex<Airport>* currentVertex,
         }
     }
 }*/
+
+void Manager::getDiameterPairs() const {
+    list<pair<string, string>> diameterPairs;
+    unsigned int maximumDistance = 0;
+    //DEBUG
+    int count = 0;
+
+    for (Vertex<Airport>* vertex : network.getVertexSet()) {
+        //DEBUG
+        count++;
+        list<pair<string, string>> tempPairs;
+        int temp = getMaximumDistance(vertex, tempPairs);
+        if (temp > maximumDistance) {
+            maximumDistance = temp;
+            diameterPairs = tempPairs;
+        } else if (temp == maximumDistance) {
+            diameterPairs.merge(tempPairs);
+        }
+    }
+
+    cout << "The maximum distance (maximum number of lay-overs) between two airports is: "
+         << maximumDistance << endl
+         << "And is made between the following pair(s) of airports: " << endl;
+
+    for (pair<string, string> e : diameterPairs) {
+        cout << "Source: " << e.first << " - Target: " << e.second << endl;
+    }
+}
+
+int Manager::getMaximumDistance(Vertex<Airport> *sourceVertex, list<pair<string, string>> &trips) const{
+    int maximumDistance = 0;
+
+    for (Vertex<Airport>* vertex : network.getVertexSet()) {
+        vertex->setVisited(false);
+        vertex->setProcessing(false);
+    }
+
+    queue<pair<Vertex<Airport>*, int>> vertexToVisit;
+    vertexToVisit.push({sourceVertex, 0});
+    sourceVertex->setProcessing(true);
+
+    while (!vertexToVisit.empty()) {
+        Vertex<Airport>* currentVertex = vertexToVisit.front().first;
+
+        if (vertexToVisit.front().second > maximumDistance) {
+            maximumDistance = vertexToVisit.front().second;
+            trips = {{sourceVertex->getInfo().getCode(), currentVertex->getInfo().getCode()}};
+        } else if (vertexToVisit.front().second  == maximumDistance) {
+            trips.merge({{sourceVertex->getInfo().getCode(), currentVertex->getInfo().getCode()}});
+        }
+
+        for (Edge<Airport> edge: currentVertex->getAdj()) {
+            if (edge.getDest()->isVisited()) continue;
+            if (edge.getDest()->isProcessing()) continue;
+            vertexToVisit.push({edge.getDest(), vertexToVisit.front().second + 1});
+            edge.getDest()->setProcessing(true);
+        }
+
+        vertexToVisit.pop();
+        currentVertex->setVisited(true);
+        currentVertex->setProcessing(false);
+    }
+
+    return maximumDistance;
+}
 
 void Manager::getTopKAirport(const int& K) const {
     // Create a vector to store airports and their flight counts
