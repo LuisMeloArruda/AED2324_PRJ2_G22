@@ -23,8 +23,8 @@ public:
     void checkCountriesAirport() const;
     void checkCountriesCity() const;
     void checkDestinations() const;
-    void checkTopKAirport() const;
     void checkReachableDestinations() const;
+    void checkTopKAirport() const;
 
 
     // Auxiliary Functions

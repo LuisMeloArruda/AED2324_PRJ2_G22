@@ -59,8 +59,8 @@ bool App::statistics() const {
             "\n5. Number of countries an airport flies to"
             "\n6. Number of countries a city has flights to"
             "\n7. Number of destinations of an airport"
-            "\n8. Top-k airport with the greatest air traffic capacity"
-            "\n9. Number of reachable airports given the number of stops"
+            "\n8. Number of reachable airports given the number of stops"
+            "\n9. Top-k airport with the greatest air traffic capacity"
             "\nYour option:";
     cin >> choice;
     cout << endl;
@@ -96,10 +96,10 @@ bool App::statistics() const {
             checkDestinations();
             break;
         case 8:
-            checkTopKAirport();
+            checkReachableDestinations();
             break;
         case 9:
-            checkReachableDestinations();
+            checkTopKAirport();
             break;
     }
     return (choice == 0);
@@ -162,6 +162,17 @@ void App::checkDestinations() const {
     information.getDestinations(temp);
 }
 
+void App::checkReachableDestinations() const {
+    cout << "Please insert wanted Airport code:";
+    string code;
+    cin >> code;
+    Airport temp = Airport(code);
+    cout << "Please insert the number of stops:";
+    int stops;
+    cin >> stops;
+    information.getReachableDestinations(temp, stops);
+};
+
 void App::checkTopKAirport() const {
     cout << "How many top airports do you want to retrieve? \n";
     int K;
@@ -173,18 +184,7 @@ void App::checkTopKAirport() const {
     if (K > 0) {
         information.getTopKAirport(K);
     }
-};
-
-void App::checkReachableDestinations() const {
-    cout << "Please insert wanted Airport code:";
-    string code;
-    cin >> code;
-    Airport temp = Airport(code);
-    cout << "Please insert the number of stops:";
-    int stops;
-    cin >> stops;
-    information.getReachableDestinations(temp, stops);
-};
+}
 
 /**
  * @brief Method to test if the given input is within the range of possibilities

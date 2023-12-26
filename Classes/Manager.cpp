@@ -142,7 +142,7 @@ void Manager::getFlightsInCity(string city) const {
             }
             continue;
         }
-        // Else then airport is inside the city and we count all its flights
+        // Else then airport is inside the city, and we count all its flights
         count += airport->getAdj().size();
     }
 
@@ -224,38 +224,64 @@ void Manager::getDestinations(Airport airport) const {
     cout << "NUMBER OF DESTINATION COUNTRIES: " << countryCount  << endl;
 }
 
-void Manager::getTopKAirport(const int& K) const {
-    // Create a vector to store airports and their flight counts
-    vector<pair<Vertex<Airport>*, int>> airportFlightsCount;
+void Manager::getReachableDestinations(const Airport &startAirport, int stops) const {
+    Vertex<Airport>* sourceVertex;
 
-    // Iterate over all airports and count their total flights
-    for (Vertex<Airport>* airport : network.getVertexSet()) {
-        int flightCount = airport->getAdj().size();
-        airportFlightsCount.push_back({airport, flightCount});
+    // Initialize sets to keep track of visited airports, cities, and countries
+    unordered_set<string> visitedAirports;
+    unordered_set<string> visitedCities;
+    unordered_set<string> visitedCountries;
+
+    for (Vertex<Airport>* vertex : network.getVertexSet()) {
+        vertex->setVisited(false);
+        if (vertex->getInfo() == startAirport) sourceVertex = vertex;
     }
 
-    // Sort the vector based on flight counts in descending order
-    sort(airportFlightsCount.begin(), airportFlightsCount.end(),
-         [](const auto& a, const auto& b) {
-             return a.second > b.second;
-         });
+    queue<pair<Vertex<Airport>*, int>> vertexToVisit;
+    vertexToVisit.push({sourceVertex, stops});
 
-    // Display the top K airports
-    cout << "Top " << K << " Airports based on Flight Counts:\n";
-    for (int i = 0; i < min(K, static_cast<int>(airportFlightsCount.size())); ++i) {
-        Vertex<Airport>* airport = airportFlightsCount[i].first;
-        int flightCount = airportFlightsCount[i].second;
-
-        cout << i+1 << ". " << airport->getInfo().getName()
-             << " (" << airport->getInfo().getCode() << ") "
-             << " -  Number of flights: " << flightCount << endl;
+    while (!vertexToVisit.empty()) {
+        Vertex<Airport>* currentVertex = vertexToVisit.front().first;
+        // If node has alredy been visited then skip it
+        if (currentVertex->isVisited()) {
+            vertexToVisit.pop();
+            continue;
+        }
+        // Add to visited sets and remove node from queue
+        vertexToVisit.front().first->setVisited(true);
+        visitedAirports.insert(currentVertex->getInfo().getCode());
+        visitedCities.insert(currentVertex->getInfo().getCity());
+        visitedCountries.insert(currentVertex->getInfo().getCountry());
+        // If node is last stop then don't add its adjacent to queue
+        if (vertexToVisit.front().second == 0) {
+            vertexToVisit.pop();
+            continue;
+        }
+        for (Edge<Airport> edge: currentVertex->getAdj()) {
+            vertexToVisit.push({edge.getDest(), vertexToVisit.front().second - 1});
+        }
+        vertexToVisit.pop();
     }
+
+    // Display the results
+    cout << "Reachable destinations from "
+         << startAirport.getCode()
+         << " with a maximum of "
+         << stops << " stop(s):" << endl;
+
+    cout << "Airports: " << visitedAirports.size() << endl;
+    cout << "Cities: " << visitedCities.size() << endl;
+    cout << "Countries: " << visitedCountries.size() << endl;
 }
 
-
-void Manager::getReachableDestinations(const Airport& startAirport, int maxStops) const {
+/*void Manager::getReachableDestinations(const Airport& startAirport, int maxStops) const {
     // Find the starting vertex in the graph using the provided airport information
     Vertex<Airport>* startVertex = network.findVertex(startAirport);
+
+    // Set all nodes as unvisited
+    for (Vertex<Airport>* vertex : network.getVertexSet()) {
+        vertex->setVisited(false);
+    }
 
     // Check if the starting airport is found in the graph
     if (startVertex == nullptr) {
@@ -289,6 +315,7 @@ void Manager::dfsReachableDestinations(Vertex<Airport>* currentVertex,
                                        unordered_set<string>& visitedCountries) const {
 
     // Mark the current airport, city, and country as visited
+    currentVertex->setVisited(true);
     visitedAirports.insert(currentVertex->getInfo().getCode());
     visitedCities.insert(currentVertex->getInfo().getCity());
     visitedCountries.insert(currentVertex->getInfo().getCountry());
@@ -303,9 +330,37 @@ void Manager::dfsReachableDestinations(Vertex<Airport>* currentVertex,
         Vertex<Airport>* neighborVertex = edge.getDest();
 
         // Check if the neighbor airport is not visited to avoid cycles
-        if (visitedAirports.find(neighborVertex->getInfo().getCode()) == visitedAirports.end()) {
+        if (!neighborVertex->isVisited()) {
             dfsReachableDestinations(neighborVertex, maxStops, currentStops + 1,
                                      visitedAirports, visitedCities, visitedCountries);
         }
+    }
+}*/
+
+void Manager::getTopKAirport(const int& K) const {
+    // Create a vector to store airports and their flight counts
+    vector<pair<Vertex<Airport>*, int>> airportFlightsCount;
+
+    // Iterate over all airports and count their total flights
+    for (Vertex<Airport>* airport : network.getVertexSet()) {
+        int flightCount = airport->getAdj().size();
+        airportFlightsCount.push_back({airport, flightCount});
+    }
+
+    // Sort the vector based on flight counts in descending order
+    sort(airportFlightsCount.begin(), airportFlightsCount.end(),
+         [](const auto& a, const auto& b) {
+             return a.second > b.second;
+         });
+
+    // Display the top K airports
+    cout << "Top " << K << " Airports based on Flight Counts:\n";
+    for (int i = 0; i < min(K, static_cast<int>(airportFlightsCount.size())); ++i) {
+        Vertex<Airport>* airport = airportFlightsCount[i].first;
+        int flightCount = airportFlightsCount[i].second;
+
+        cout << i+1 << ". " << airport->getInfo().getName()
+             << " (" << airport->getInfo().getCode() << ") "
+             << " -  Number of flights: " << flightCount << endl;
     }
 }
