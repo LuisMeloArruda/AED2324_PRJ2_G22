@@ -93,9 +93,15 @@ void Manager::readFlights() {
         Airport sourceAirport = Airport(source);
         Airport targetAirport = Airport(target);
 
-       if(!network.addEdge(sourceAirport, targetAirport, airline)) {
+        auto v1 = network.findVertex(sourceAirport);
+        auto v2 = network.findVertex(targetAirport);
+
+        v1->setOutDegree(v1->getOutDegree()+1);
+        v2->setInDegree(v2->getInDegree()+1);
+
+        if(!network.addEdge(v1, v2, airline)) {
            cout << "SOMETHING WENT WRONG ADDING EDGE FROM AIRPORT " << source << " TO AIRPORT " << target << endl;
-       }
+        }
 
     }
 }
@@ -340,12 +346,8 @@ void Manager::dfsReachableDestinations(Vertex<Airport>* currentVertex,
 void Manager::getDiameterPairs() const {
     list<pair<string, string>> diameterPairs;
     unsigned int maximumDistance = 0;
-    //DEBUG
-    int count = 0;
 
     for (Vertex<Airport>* vertex : network.getVertexSet()) {
-        //DEBUG
-        count++;
         list<pair<string, string>> tempPairs;
         int temp = getMaximumDistance(vertex, tempPairs);
         if (temp > maximumDistance) {
@@ -408,7 +410,7 @@ void Manager::getTopKAirport(const int& K) const {
 
     // Iterate over all airports and count their total flights
     for (Vertex<Airport>* airport : network.getVertexSet()) {
-        int flightCount = airport->getAdj().size();
+        int flightCount = airport->getOutDegree() + airport->getInDegree();
         airportFlightsCount.push_back({airport, flightCount});
     }
 

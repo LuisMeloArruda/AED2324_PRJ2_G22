@@ -22,7 +22,8 @@ class Vertex {
     vector<Edge<T> > adj;  // list of outgoing edges
     bool visited;          // auxiliary field
     bool processing;       // auxiliary field
-
+    unsigned int inDegree = 0;
+    unsigned int outDegree = 0;
     void addEdge(Vertex<T> *dest, string airline);
     bool removeEdgeTo(Vertex<T> *d);
 public:
@@ -33,6 +34,10 @@ public:
     void setVisited(bool v);
     bool isProcessing() const;
     void setProcessing(bool p);
+    unsigned int getInDegree() const;
+    void setInDegree(unsigned int degree);
+    unsigned int getOutDegree() const;
+    void setOutDegree(unsigned int degree);
     const vector<Edge<T>> &getAdj() const;
     void setAdj(const vector<Edge<T>> &adj);
     friend class Graph<T>;
@@ -64,6 +69,7 @@ public:
     bool addVertex(const T &in);
     bool removeVertex(const T &in);
     bool addEdge(const T &sourc, const T &dest, string airline);
+    bool addEdge(Vertex<T>* sourc, Vertex<T>* dest, string airline);
     bool removeEdge(const T &sourc, const T &dest);
     vector<Vertex<T> * > getVertexSet() const;
 };
@@ -107,6 +113,26 @@ bool Vertex<T>::isProcessing() const {
 template<class T>
 void Vertex<T>::setProcessing(bool p) {
     Vertex::processing = p;
+}
+
+template<class T>
+unsigned int Vertex<T>::getInDegree() const{
+    return inDegree;
+}
+
+template<class T>
+void Vertex<T>::setInDegree(unsigned int degree) {
+    Vertex::inDegree = degree;
+}
+
+template<class T>
+unsigned int Vertex<T>::getOutDegree() const{
+    return outDegree;
+}
+
+template<class T>
+void Vertex<T>::setOutDegree(unsigned int degree) {
+    Vertex::outDegree = degree;
 }
 
 template<class T>
@@ -191,6 +217,19 @@ bool Graph<T>::addEdge(const T &sourc, const T &dest, string airline) {
     if (v1 == NULL || v2 == NULL)
         return false;
     v1->addEdge(v2,airline);
+    return true;
+}
+
+/*
+ * Adds an edge to a graph (this), given source and
+ * destination vertices and the edge weight (w).
+ * Returns true if successful, and false if the source or destination vertex does not exist.
+ */
+template <class T>
+bool Graph<T>::addEdge(Vertex<T>* sourc, Vertex<T>* dest, string airline) {
+    if (sourc == NULL || dest == NULL)
+        return false;
+    sourc->addEdge(dest,airline);
     return true;
 }
 

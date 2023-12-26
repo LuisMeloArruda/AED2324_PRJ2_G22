@@ -67,7 +67,7 @@ bool App::statistics() const {
     cout << endl;
 
     // Check if option is valid
-    while(!isValidOption(choice, 9)) {
+    while(!isValidOption(choice, 10)) {
         cin >> choice;
     }
 
