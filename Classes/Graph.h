@@ -22,8 +22,9 @@ class Vertex {
     vector<Edge<T> > adj;  // list of outgoing edges
     bool visited;          // auxiliary field
     bool processing;       // auxiliary field
-    unsigned int inDegree = 0;
-    unsigned int outDegree = 0;
+    unsigned int inDegree = 0; // auxiliary field
+    int num;               // auxiliary field
+    int low;               // auxiliary field
     void addEdge(Vertex<T> *dest, string airline);
     bool removeEdgeTo(Vertex<T> *d);
 public:
@@ -34,12 +35,14 @@ public:
     void setVisited(bool v);
     bool isProcessing() const;
     void setProcessing(bool p);
-    unsigned int getInDegree() const;
-    void setInDegree(unsigned int degree);
-    unsigned int getOutDegree() const;
-    void setOutDegree(unsigned int degree);
     const vector<Edge<T>> &getAdj() const;
     void setAdj(const vector<Edge<T>> &adj);
+    unsigned int getInDegree() const;
+    void setInDegree(unsigned int degree);
+    int getNum() const;
+    void setNum(int num);
+    int getLow() const;
+    void setLow(int low);
     friend class Graph<T>;
 };
 
@@ -126,13 +129,23 @@ void Vertex<T>::setInDegree(unsigned int degree) {
 }
 
 template<class T>
-unsigned int Vertex<T>::getOutDegree() const{
-    return outDegree;
+int Vertex<T>::getNum() const {
+    return num;
 }
 
 template<class T>
-void Vertex<T>::setOutDegree(unsigned int degree) {
-    Vertex::outDegree = degree;
+void Vertex<T>::setNum(int num) {
+    Vertex::num = num;
+}
+
+template<class T>
+int Vertex<T>::getLow() const {
+    return low;
+}
+
+template<class T>
+void Vertex<T>::setLow(int low) {
+    Vertex::low = low;
 }
 
 template<class T>

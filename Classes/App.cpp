@@ -62,12 +62,13 @@ bool App::statistics() const {
             "\n8. Number of reachable airports given the number of stops"
             "\n9. Maximum distance (maximum number of lay-overs) between two airports"
             "\n10. Top-k airport with the greatest air traffic capacity"
+            "\n11. List essential airports to the network's circulation capability"
             "\nYour option:";
     cin >> choice;
     cout << endl;
 
     // Check if option is valid
-    while(!isValidOption(choice, 10)) {
+    while(!isValidOption(choice, 11)) {
         cin >> choice;
     }
 
@@ -104,6 +105,9 @@ bool App::statistics() const {
             break;
         case 10:
             checkTopKAirport();
+            break;
+        case 11:
+            checkEssentialAirports();
             break;
     }
     return (choice == 0);
@@ -193,6 +197,10 @@ void App::checkTopKAirport() const {
     if (K > 0) {
         information.getTopKAirport(K);
     }
+}
+
+void App::checkEssentialAirports() const {
+    information.getEssentialAirports();
 }
 
 /**

@@ -40,6 +40,8 @@ public:
     ) const;*/
     void getDiameterPairs() const;
     void getTopKAirport(const int& K) const;
+    void getEssentialAirports() const;
+    void dfs_art(Vertex<Airport>* v, unordered_set<string>& essentialAirports, unsigned int index) const;
 
     // Auxiliary Functions
     void readAirlines();

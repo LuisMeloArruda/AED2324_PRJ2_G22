@@ -26,7 +26,7 @@ public:
     void checkReachableDestinations() const;
     void checkDiameter() const;
     void checkTopKAirport() const;
-
+    void checkEssentialAirports() const;
 
     // Auxiliary Functions
     static bool isValidOption(int choice, int numberOfOptions);

@@ -96,7 +96,6 @@ void Manager::readFlights() {
         auto v1 = network.findVertex(sourceAirport);
         auto v2 = network.findVertex(targetAirport);
 
-        v1->setOutDegree(v1->getOutDegree()+1);
         v2->setInDegree(v2->getInDegree()+1);
 
         if(!network.addEdge(v1, v2, airline)) {
@@ -410,7 +409,7 @@ void Manager::getTopKAirport(const int& K) const {
 
     // Iterate over all airports and count their total flights
     for (Vertex<Airport>* airport : network.getVertexSet()) {
-        int flightCount = airport->getOutDegree() + airport->getInDegree();
+        int flightCount = airport->getAdj().size() + airport->getInDegree();
         airportFlightsCount.push_back({airport, flightCount});
     }
 
@@ -430,4 +429,51 @@ void Manager::getTopKAirport(const int& K) const {
              << " (" << airport->getInfo().getCode() << ") "
              << " -  Number of flights: " << flightCount << endl;
     }
+}
+
+void Manager::getEssentialAirports() const {
+    unsigned int index = 1;
+    unordered_set<string> essentialAirports;
+
+    for (Vertex<Airport>* vertex : network.getVertexSet()) {
+        vertex->setVisited(false);
+        vertex->setProcessing(false);
+    }
+
+    for (Vertex<Airport>* v : network.getVertexSet()) {
+        if (!v->isVisited()) {
+            dfs_art(v, essentialAirports, index);
+        }
+    }
+
+    // Displaying the Essential airports
+    cout << "ESSENTIAL AIRPORTS: " << endl;
+    for (string e : essentialAirports) {
+        cout << "- " << e << endl;
+    }
+    cout << "There are a total of " << essentialAirports.size() << " essential airports in the network" << endl;
+}
+
+void Manager::dfs_art(Vertex<Airport> *v, unordered_set<string>& essentialAirports, unsigned int index) const {
+    int children = 0;
+    v->setNum(index);
+    v->setLow(index);
+    index++;
+    v->setProcessing(true);
+    v->setVisited(true);
+
+    for (const Edge<Airport>& e : v->getAdj()) {
+        Vertex<Airport>* w = e.getDest();
+        if (!w->isVisited()) {
+            children++;
+            dfs_art(w, essentialAirports, index);
+            if (v->getLow() > w->getLow()) v->setLow(w->getLow());
+            if (w->getLow() >= v->getNum() and v->getNum() != 1) essentialAirports.insert(v->getInfo().getCode());
+            if (v->getNum() == 1 and children > 1) essentialAirports.insert(v->getInfo().getCode());
+        } else if (w->isProcessing()) {
+            if (v->getLow() > w->getNum()) v->setLow(w->getNum());
+        }
+    }
+
+    v->setProcessing(false);
 }
