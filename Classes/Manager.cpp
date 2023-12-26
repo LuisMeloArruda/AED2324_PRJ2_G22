@@ -353,7 +353,7 @@ void Manager::getDiameterPairs() const {
             maximumDistance = temp;
             diameterPairs = tempPairs;
         } else if (temp == maximumDistance) {
-            diameterPairs.merge(tempPairs);
+            diameterPairs.splice(diameterPairs.end(), tempPairs);
         }
     }
 
@@ -385,7 +385,7 @@ int Manager::getMaximumDistance(Vertex<Airport> *sourceVertex, list<pair<string,
             maximumDistance = vertexToVisit.front().second;
             trips = {{sourceVertex->getInfo().getCode(), currentVertex->getInfo().getCode()}};
         } else if (vertexToVisit.front().second  == maximumDistance) {
-            trips.merge({{sourceVertex->getInfo().getCode(), currentVertex->getInfo().getCode()}});
+            trips.insert(trips.end(), {sourceVertex->getInfo().getCode(), currentVertex->getInfo().getCode()});
         }
 
         for (Edge<Airport> edge: currentVertex->getAdj()) {
