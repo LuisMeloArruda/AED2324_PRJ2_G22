@@ -14,6 +14,7 @@ public:
     void run();
     static int menu();
     bool statistics() const;
+    bool scheduleFlight() const;
 
     // Lookup functions
     void checkGlobal() const;
@@ -31,11 +32,13 @@ public:
     // Auxiliary Functions
     static bool isValidOption(int choice, int numberOfOptions);
     static bool continueQuestion();
+    void getPath() const;
+    list<Vertex<Airport>*> askForAirport() const;
+    list<Vertex<Airport> *> getAirportsByCode() const;
 
 private:
-    /** @brief Extractor object which keeps all students, schedules, requests and their functions */
+    /** @brief Extractor object which keeps */
     Manager information;
-
 };
 
 #endif //AED2324_PRJ1_G22_APP_H

@@ -82,6 +82,9 @@ void Manager::readFlights() {
     string line;
     getline(file, line); // Ignore header
 
+    string previousSource = "";
+    string previousTarget = "";
+
     while (getline(file, line)) {
         // Exracting Info
         istringstream ss(line);
@@ -93,8 +96,11 @@ void Manager::readFlights() {
         Airport sourceAirport = Airport(source);
         Airport targetAirport = Airport(target);
 
-        auto v1 = network.findVertex(sourceAirport);
-        auto v2 = network.findVertex(targetAirport);
+        Vertex<Airport> *v1 = nullptr;
+        Vertex<Airport>* v2 = nullptr;
+
+        if (previousSource != source) v1 = network.findVertex(sourceAirport);
+        if (previousTarget != target) v2 = network.findVertex(targetAirport);
 
         v2->setInDegree(v2->getInDegree()+1);
 
@@ -476,4 +482,69 @@ void Manager::dfs_art(Vertex<Airport> *v, unordered_set<string>& essentialAirpor
     }
 
     v->setProcessing(false);
+}
+
+void Manager::getBestFlight(list<Vertex<Airport> *> sourceAirports, list<Vertex<Airport> *> targetAirports) const {
+    unsigned int minimumPath = network.getVertexSet().size() + 1;
+    list<pair<string, string>> flightOptions;
+
+    for (Vertex<Airport>* source : sourceAirports) {
+        for (Vertex<Airport>* target : targetAirports) {
+            list<pair<string, string>> temp;
+            unsigned int currentPath = getMinimumPath(source, target, temp);
+            if (currentPath < minimumPath) {
+                minimumPath = currentPath;
+                flightOptions = temp;
+            } else if (currentPath == minimumPath) {
+                flightOptions.insert(flightOptions.end(), temp.begin(), temp.end());
+            }
+        }
+    }
+
+    cout << "There are " << flightOptions.size() << " flights that only take " << minimumPath << " layovers" << endl;
+    for (pair<string, string> option : flightOptions) {
+        cout << option.first << " - " << option.second << endl;
+    }
+}
+
+unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<pair<string, string>>& options) const {
+    unsigned int minimumPath = network.getVertexSet().size() + 1;
+
+    for (Vertex<Airport>* vertex : network.getVertexSet()) {
+        vertex->setVisited(false);
+    }
+
+    queue<pair<Vertex<Airport>*, int>> vertexToVisit;
+    vertexToVisit.emplace(source, 0);
+
+    while (!vertexToVisit.empty()) {
+        Vertex<Airport>* currentVertex = vertexToVisit.front().first;
+
+        if (currentVertex == target) {
+            if (vertexToVisit.front().second < minimumPath) {
+                minimumPath = vertexToVisit.front().second;
+                options = {{source->getInfo().getCode(), target->getInfo().getCode()}};
+            }
+            else if (vertexToVisit.front().second == minimumPath) options.insert(options.end(), {source->getInfo().getCode(), target->getInfo().getCode()});
+            vertexToVisit.pop();
+            continue;
+        }
+
+        for (Edge<Airport> edge: currentVertex->getAdj()) {
+            if (edge.getDest()->isVisited()) continue;
+            vertexToVisit.push({edge.getDest(), vertexToVisit.front().second + 1});
+            if (edge.getDest() != target) edge.getDest()->setProcessing(true);
+        }
+
+        vertexToVisit.pop();
+        currentVertex->setVisited(true);
+    }
+
+    return minimumPath;
+}
+
+list<Vertex<Airport> *> Manager::getAirportsByCode(string code) const {
+    list<Vertex<Airport> *> res;
+    res.insert(res.begin(), network.findVertex(Airport(code)));
+    return res;
 }

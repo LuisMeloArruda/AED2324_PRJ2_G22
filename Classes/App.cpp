@@ -27,6 +27,10 @@ void App::run() {
                 if (statistics()) break;
                 if (continueQuestion()) return;
                 break;
+            case 2:
+                if (scheduleFlight()) break;
+                if (continueQuestion()) return;
+                break;
         }
     }
 }
@@ -37,11 +41,12 @@ int App::menu() {
     cout << "\nChoose an option:"
             "\n0. Exit"
             "\n1. Statistics"
+            "\n2. Schedule Flight"
     << "\nYour option:";
     cin >> choice;
 
     // Check if option is valid
-    while(!isValidOption(choice, 1)) {
+    while(!isValidOption(choice, 2)) {
         cin >> choice;
     }
     return choice;
@@ -113,6 +118,32 @@ bool App::statistics() const {
     return (choice == 0);
 }
 
+bool App::scheduleFlight() const {
+    // Print Menu
+    int choice;
+    cout << "\nChoose an option:"
+            "\n0. Go Back"
+            "\n1. Without Filters"
+            "\n2. With Filters"
+            "\nYour option:";
+    cin >> choice;
+    cout << endl;
+
+    // Check if option is valid
+    while(!isValidOption(choice, 1)) {
+        cin >> choice;
+    }
+
+    // Call correct lookup function
+    switch (choice) {
+        case 0:
+            break;
+        case 1:
+            getPath();
+            break;
+    }
+    return (choice == 0);
+}
 
 void App::checkGlobal() const {
     cout << "GLOBAL NUMBER OS AIRPORTS: "  << information.getAirportNumber() << endl;
@@ -232,4 +263,46 @@ bool App::continueQuestion() {
     cin >> answer;
     if (answer == "N" || answer == "n") return true;
     return false;
+}
+
+void App::getPath() const {
+    list<Vertex<Airport>*> sourceAirports;
+    list<Vertex<Airport>*> targetAirports;
+
+    cout << "\nChose form of input for departure:";
+    sourceAirports = askForAirport();
+    cout << "\nChose form of input for arrival:";
+    targetAirports = askForAirport();
+
+    information.getBestFlight(sourceAirports, targetAirports);
+}
+
+list<Vertex<Airport>*> App::askForAirport() const {
+    int choice;
+    cout << "\n0. Airport Code"
+            "\n1. Airport Name"
+            "\n2. City Name"
+            "\n3. Geographical Coordinates"
+            "\nYour option:";
+    cin >> choice;
+    cout << endl;
+
+    // Check if option is valid
+    while(!isValidOption(choice, 1)) {
+        cin >> choice;
+    }
+
+    // Call correct lookup function
+    switch (choice) {
+        case 0:
+            return getAirportsByCode();
+    }
+}
+
+list<Vertex<Airport> *> App::getAirportsByCode() const {
+    cout << "Please insert wanted Airport code:";
+    string code;
+    cin >> code;
+
+    return information.getAirportsByCode(code);
 }
