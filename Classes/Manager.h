@@ -13,6 +13,9 @@
 #include "Airport.h"
 #include "Graph.h"
 
+/**
+ * @brief The class which keeps information about airlines and network
+ */
 class Manager {
 private:
     set<Airline> airlines;

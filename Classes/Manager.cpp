@@ -1,19 +1,29 @@
 #include "Manager.h"
 
 /**
- * @brief Standard Constructor, sets all the attributes to their respective empty values
+ * @brief Standard Constructor, sets all the attributes to their respective empty values.
  * @details Time complexity: O(1)
  */
 Manager::Manager() {
     airlines = set<Airline>();
 }
 
+/**
+ * @brief Runs read methods and fills Manager's attributes.
+ * @see readAirlines()
+ * @see readAirports()
+ * @see readFlights()
+ */
 void Manager::readFiles() {
     readAirlines();
     readAirports();
     readFlights();
 }
 
+/**
+ * @brief Read the "airlines.csv" file and fills Manager's airlines with code, name, callSign and country.
+ * @details Time complexity:
+ */
 void Manager::readAirlines() {
     fstream  file("../data/airlines.csv");
 
@@ -39,6 +49,10 @@ void Manager::readAirlines() {
     }
 }
 
+/**
+ * @brief Read the "airports.csv" file and fills Manager's network with code, name, city, country, latitude, longitude.
+ * @details Time complexity:
+ */
 void Manager::readAirports() {
     fstream  file("../data/airports.csv");
 
@@ -72,6 +86,10 @@ void Manager::readAirports() {
 
 }
 
+/**
+ * @brief Read the "flights.csv" file and fill each Manager's network vertex with edges.
+ * @details Time complexity:
+ */
 void Manager::readFlights() {
     fstream  file("../data/flights.csv");
 
@@ -111,10 +129,20 @@ void Manager::readFlights() {
     }
 }
 
+/**
+ * @brief Returns the number of network's vertices.
+ * @details Time complexity: O(1)
+ * @return the number of network's vertices.
+ */
 int Manager::getAirportNumber() const {
     return network.getNumVertex();
 }
 
+/**
+ * @brief Returns the number of network's flights.
+ * @details Time complexity: O(n), where n is the number of vertices
+ * @return the number of network's flights.
+ */
 int Manager::getGlobalFlightNumber() const {
     int count = 0;
     for (Vertex<Airport>* airport : network.getVertexSet()) {
@@ -123,6 +151,11 @@ int Manager::getGlobalFlightNumber() const {
     return count;
 }
 
+/**
+ * @brief Search for outbound flights from a specified airport.
+ * @details Time complexity:
+ * @param airport The airport where we will search for outbound flights.
+ */
 void Manager::getOutFlights(Airport airport) const {
     Vertex<Airport>* airportPtr = network.findVertex(airport);
     if (airportPtr == NULL) {
@@ -142,6 +175,12 @@ void Manager::getOutFlights(Airport airport) const {
     cout << "FROM " << count << " DIFFERENT AIRLINES" << endl;
 }
 
+/**
+ * @brief Search for inbound and outbounds flights to a specified city.
+ * @details Time complexity:
+ * @param city The city where we will search for flights passing through it
+ * @param country The country to avoid ambiguous searches
+ */
 void Manager::getFlightsInCity(string city, string country) const {
     int count = 0;
     for (Vertex<Airport>* airport : network.getVertexSet()) {
@@ -162,6 +201,11 @@ void Manager::getFlightsInCity(string city, string country) const {
     cout << "NUMBER OF FLIGHTS THAT PASS TROUGH IT: " << count << endl;
 }
 
+/**
+ * @brief Provides the number of flights by a specified airline.
+ * @details Time complexity:
+ * @param airline The airline where we will search for flights.
+ */
 void Manager::getFlightsOfAirline(string airline) const {
     int count = 0;
     for (Vertex<Airport>* airport : network.getVertexSet()) {
@@ -174,6 +218,11 @@ void Manager::getFlightsOfAirline(string airline) const {
     cout << "NUMBER OF FLIGHTS PROVIDE BY IT: " << count << endl;
 }
 
+/**
+ * @brief Provides the number of countries by a specified airport.
+ * @details Time complexity:
+ * @param airport The airport where we will search for countries.
+ */
 void Manager::getCountriesAirport(Airport airport) const {
     Vertex<Airport>* airportPtr = network.findVertex(airport);
     if (airportPtr == NULL) {
@@ -192,6 +241,12 @@ void Manager::getCountriesAirport(Airport airport) const {
     cout << "NUMBER OF COUNTRIES IT FLIES TO: " << count << endl;
 }
 
+/**
+ * @brief Provides the number of countries by a specified city.
+ * @details Time complexity:
+ * @param city
+ * @param country
+ */
 void Manager::getCountriesCity(string city, string country) const {
     unordered_set<string> countries;
     int count = 0;
@@ -207,6 +262,17 @@ void Manager::getCountriesCity(string city, string country) const {
     cout << "NUMBER OF COUNTRIES IT HAS FLIGHTS TO: " << count << endl;
 }
 
+/**
+ * @brief Auxiliar depth-first search to count the number of airports, cities and countries for a vertice.
+ * @details Time complexity:
+ * @param v
+ * @param airportCount
+ * @param cityCount
+ * @param countryCount
+ * @param airports
+ * @param cities
+ * @param countries
+ */
 void Manager::dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cityCount, int &countryCount,
                                  unordered_set<string> &airports, set<pair<string, string>> &cities, unordered_set<string> &countries) const {
     v->setVisited(true);
@@ -227,6 +293,12 @@ void Manager::dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cit
     }
 }
 
+/**
+ * @brief Method to count the number of airports, cities and countries for a given airport.
+ * @details Time complexity:
+ * @param airport Given airport
+ * @see dfsGetDestinations()
+ */
 void Manager::getDestinations(Airport airport) const {
     Vertex<Airport>* airportPtr = network.findVertex(airport);
     if (airportPtr == NULL) {
@@ -253,6 +325,12 @@ void Manager::getDestinations(Airport airport) const {
     cout << "NUMBER OF DESTINATION COUNTRIES: " << countryCount  << endl;
 }
 
+/**
+ * @brief A method to count the number of airports, cities, and countries for a given airport within a limit
+ * @details Time complexity:
+ * @param startAirport Given airport
+ * @param stops limit
+ */
 void Manager::getReachableDestinations(const Airport &startAirport, int stops) const {
     Vertex<Airport>* sourceVertex;
 
@@ -366,6 +444,11 @@ void Manager::dfsReachableDestinations(Vertex<Airport>* currentVertex,
     }
 }*/
 
+/**
+ * @brief Prints the maximum trip and corresponding pair of source-destination airports
+ * @details Time complexity:
+ * @see getMaximumDistance();
+ */
 void Manager::getDiameterPairs() const {
     list<pair<string, string>> diameterPairs;
     unsigned int maximumDistance = 0;
@@ -390,6 +473,12 @@ void Manager::getDiameterPairs() const {
     }
 }
 
+/**
+ * @brief Auxiliar breadth-First Search
+ * @details Time complexity:
+ * @param sourceVertex,trips A vertex and pair of source-destination airports
+ * @return The number of maximum distance for a vertex
+ */
 int Manager::getMaximumDistance(Vertex<Airport> *sourceVertex, list<pair<string, string>> &trips) const{
     int maximumDistance = 0;
 
@@ -427,6 +516,11 @@ int Manager::getMaximumDistance(Vertex<Airport> *sourceVertex, list<pair<string,
     return maximumDistance;
 }
 
+/**
+ * @brief Method that Identify the top-k airport with the greatest air traffic capacity
+ * @details Time complexity:
+ * @param K
+ */
 void Manager::getTopKAirport(const int& K) const {
     // Create a vector to store airports and their flight counts
     vector<pair<Vertex<Airport>*, int>> airportFlightsCount;
@@ -455,6 +549,11 @@ void Manager::getTopKAirport(const int& K) const {
     }
 }
 
+/**
+ * @brief Prints the amount of essential airports (articulation vertices) and their names
+ * @details Time complexity:
+ * @see dfs_art();
+ */
 void Manager::getEssentialAirports() const {
     unsigned int index = 1;
     unordered_set<string> essentialAirports;
@@ -478,6 +577,12 @@ void Manager::getEssentialAirports() const {
     cout << "There are a total of " << essentialAirports.size() << " essential airports in the network" << endl;
 }
 
+/**
+ * @brief Auxiliar Depth-first search to find essential airports
+ * @param v
+ * @param essentialAirports
+ * @param index
+ */
 void Manager::dfs_art(Vertex<Airport> *v, unordered_set<string>& essentialAirports, unsigned int index) const {
     int children = 0;
     v->setNum(index);

@@ -37,7 +37,7 @@ public:
     list<Vertex<Airport> *> getAirportsByCode() const;
 
 private:
-    /** @brief Extractor object which keeps */
+    /** @brief Manager object which keeps information about airlines and network*/
     Manager information;
 };
 
