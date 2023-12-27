@@ -206,11 +206,33 @@ void Manager::getCountriesCity(string city) const {
     cout << "NUMBER OF COUNTRIES IT HAS FLIGHTS TO: " << count << endl;
 }
 
+void Manager::dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cityCount, int &countryCount,
+                                 unordered_set<string> &airports, unordered_set<string> &cities, unordered_set<string> &countries) const {
+    v->setVisited(true);
+    for (Edge<Airport> edge : v->getAdj()) {
+        auto airportIt = airports.insert(edge.getDest()->getInfo().getCode());
+        auto cityIt = cities.insert(edge.getDest()->getInfo().getCity());
+        auto countryIt = countries.insert(edge.getDest()->getInfo().getCountry());
+
+        if(airportIt.second)  {
+            airportCount++;
+            Vertex<Airport>* w = network.findVertex(edge.getDest()->getInfo());
+            if (!w->isVisited()) dfsGetDestinations(w, airportCount, cityCount, countryCount,
+                                                    airports, cities, countries);
+        }
+        if(cityIt.second) cityCount++;
+        if(countryIt.second) countryCount++;
+    }
+}
+
 void Manager::getDestinations(Airport airport) const {
     Vertex<Airport>* airportPtr = network.findVertex(airport);
     if (airportPtr == NULL) {
         cout << "Airport Code not found/valid" << endl;
         return;
+    }
+    for (Vertex<Airport> *v : network.getVertexSet()) {
+        v->setVisited(false);
     }
 
     unordered_set<string> airports;
@@ -223,7 +245,12 @@ void Manager::getDestinations(Airport airport) const {
         auto cityIt = cities.insert(edge.getDest()->getInfo().getCity());
         auto countryIt = countries.insert(edge.getDest()->getInfo().getCountry());
 
-        if(airportIt.second) airportCount++;
+        if(airportIt.second)  {
+            airportCount++;
+            Vertex<Airport>* w = network.findVertex(edge.getDest()->getInfo());
+            if (!w->isVisited()) dfsGetDestinations(w, airportCount, cityCount, countryCount,
+                                                    airports, cities, countries);
+        }
         if(cityIt.second) cityCount++;
         if(countryIt.second) countryCount++;
     }

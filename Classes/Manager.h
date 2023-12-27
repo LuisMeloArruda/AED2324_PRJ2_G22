@@ -44,6 +44,8 @@ public:
     void getBestFlight(list<Vertex<Airport> *> list1, list<Vertex<Airport> *> list2) const;
 
     // Auxiliary Functions
+    void dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cityCount, int &countryCount,
+                            unordered_set<string> &airports, unordered_set<string> &cities, unordered_set<string> &countries) const;
     void readAirlines();
     void readAirports();
     void readFlights();
