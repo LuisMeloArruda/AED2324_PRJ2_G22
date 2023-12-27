@@ -163,8 +163,11 @@ void App::checkFlightsInCity() const {
     cout << "Please insert wanted City:";
     string city;
     cin >> city;
+    cout << "Please insert wanted country:";
+    string country;
+    cin >> country;
 
-    information.getFlightsInCity(city);
+    information.getFlightsInCity(city, country);
 }
 
 void App::checkFlightsOfAirline() const {
@@ -188,8 +191,11 @@ void App::checkCountriesCity() const {
     cout << "Please insert wanted City:";
     string city;
     cin >> city;
+    cout << "Please insert wanted Country:";
+    string country;
+    cin >> country;
 
-    information.getCountriesCity(city);
+    information.getCountriesCity(city, country);
 }
 
 void App::checkDestinations() const {

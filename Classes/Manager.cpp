@@ -142,19 +142,20 @@ void Manager::getOutFlights(Airport airport) const {
     cout << "FROM " << count << " DIFFERENT AIRLINES" << endl;
 }
 
-void Manager::getFlightsInCity(string city) const {
+void Manager::getFlightsInCity(string city, string country) const {
     int count = 0;
     for (Vertex<Airport>* airport : network.getVertexSet()) {
         // If airport is outside target city then we only count flights that go into target city
-        if (airport->getInfo().getCity() != city) {
+        if (airport->getInfo().getCity() != city || airport->getInfo().getCountry() != country) {
             for (Edge<Airport> edge : airport->getAdj()) {
-                if (edge.getDest()->getInfo().getCity() != city) continue;
+                if (edge.getDest()->getInfo().getCity() != city && edge.getDest()->getInfo().getCountry() != country) continue;
                 count++;
             }
-            continue;
         }
         // Else then airport is inside the city, and we count all its flights
-        count += airport->getAdj().size();
+        else if (airport->getInfo().getCity() == city && airport->getInfo().getCountry() == country) {
+            count += airport->getAdj().size();
+        }
     }
 
     cout << "INFORMATION REGARDING " << city << endl;
@@ -191,11 +192,11 @@ void Manager::getCountriesAirport(Airport airport) const {
     cout << "NUMBER OF COUNTRIES IT FLIES TO: " << count << endl;
 }
 
-void Manager::getCountriesCity(string city) const {
+void Manager::getCountriesCity(string city, string country) const {
     unordered_set<string> countries;
     int count = 0;
     for (Vertex<Airport>* airport : network.getVertexSet()) {
-        if (airport->getInfo().getCity() != city) continue;
+        if (airport->getInfo().getCity() != city && airport->getInfo().getCountry() != country) continue;
         for (Edge<Airport> edge : airport->getAdj()) {
             auto it = countries.insert(edge.getDest()->getInfo().getCountry());
             if (it.second) count++;
@@ -207,11 +208,12 @@ void Manager::getCountriesCity(string city) const {
 }
 
 void Manager::dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cityCount, int &countryCount,
-                                 unordered_set<string> &airports, unordered_set<string> &cities, unordered_set<string> &countries) const {
+                                 unordered_set<string> &airports, set<pair<string, string>> &cities, unordered_set<string> &countries) const {
     v->setVisited(true);
     for (Edge<Airport> edge : v->getAdj()) {
         auto airportIt = airports.insert(edge.getDest()->getInfo().getCode());
-        auto cityIt = cities.insert(edge.getDest()->getInfo().getCity());
+        pair<string, string> aux = make_pair(edge.getDest()->getInfo().getCity(), edge.getDest()->getInfo().getCountry());
+        auto cityIt = cities.insert(aux);
         auto countryIt = countries.insert(edge.getDest()->getInfo().getCountry());
 
         if(airportIt.second)  {
@@ -236,24 +238,13 @@ void Manager::getDestinations(Airport airport) const {
     }
 
     unordered_set<string> airports;
-    unordered_set<string> cities;
+    set<pair<string, string>> cities;
     unordered_set<string> countries;
     int airportCount = 0, cityCount = 0, countryCount = 0;
 
-    for (Edge<Airport> edge : airportPtr->getAdj()) {
-        auto airportIt = airports.insert(edge.getDest()->getInfo().getCode());
-        auto cityIt = cities.insert(edge.getDest()->getInfo().getCity());
-        auto countryIt = countries.insert(edge.getDest()->getInfo().getCountry());
+    if (!airportPtr->isVisited()) dfsGetDestinations(airportPtr, airportCount, cityCount, countryCount,
+                                                     airports, cities, countries);
 
-        if(airportIt.second)  {
-            airportCount++;
-            Vertex<Airport>* w = network.findVertex(edge.getDest()->getInfo());
-            if (!w->isVisited()) dfsGetDestinations(w, airportCount, cityCount, countryCount,
-                                                    airports, cities, countries);
-        }
-        if(cityIt.second) cityCount++;
-        if(countryIt.second) countryCount++;
-    }
 
     cout << "INFORMATION REGARDING AIRPORT " << airportPtr->getInfo().getName()
          << " WITH CODE " << airportPtr->getInfo().getCode() << endl;
@@ -267,7 +258,7 @@ void Manager::getReachableDestinations(const Airport &startAirport, int stops) c
 
     // Initialize sets to keep track of visited airports, cities, and countries
     unordered_set<string> visitedAirports;
-    unordered_set<string> visitedCities;
+    set<pair<string, string>> visitedCities;
     unordered_set<string> visitedCountries;
 
     for (Vertex<Airport>* vertex : network.getVertexSet()) {
@@ -288,7 +279,7 @@ void Manager::getReachableDestinations(const Airport &startAirport, int stops) c
         // Mark node as visited and add to visited sets
         vertexToVisit.front().first->setVisited(true);
         visitedAirports.insert(currentVertex->getInfo().getCode());
-        visitedCities.insert(currentVertex->getInfo().getCity());
+        visitedCities.insert(make_pair(currentVertex->getInfo().getCity(), currentVertex->getInfo().getCountry()));
         visitedCountries.insert(currentVertex->getInfo().getCountry());
         // If node is last stop then don't add its adjacent to queue
         if (vertexToVisit.front().second == 0) {

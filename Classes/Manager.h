@@ -25,10 +25,10 @@ public:
     int getAirportNumber() const;
     int getGlobalFlightNumber() const;
     void getOutFlights(Airport airport) const;
-    void getFlightsInCity(string city) const;
+    void getFlightsInCity(string city, string country) const;
     void getFlightsOfAirline(string airline) const;
     void getCountriesAirport(Airport airport) const;
-    void getCountriesCity(string city) const;
+    void getCountriesCity(string city, string country) const;
     void getDestinations(Airport airport) const;
     void getReachableDestinations(const Airport &startAirport, int stops) const;
     /*void dfsReachableDestinations(
@@ -45,7 +45,7 @@ public:
 
     // Auxiliary Functions
     void dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cityCount, int &countryCount,
-                            unordered_set<string> &airports, unordered_set<string> &cities, unordered_set<string> &countries) const;
+                            unordered_set<string> &airports, set<pair<string, string>> &cities, unordered_set<string> &countries) const;
     void readAirlines();
     void readAirports();
     void readFlights();
