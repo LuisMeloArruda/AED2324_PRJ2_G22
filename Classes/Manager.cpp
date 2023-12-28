@@ -686,3 +686,59 @@ list<Vertex<Airport> *> Manager::getAirportsByCode(string code) const {
     res.insert(res.begin(), network.findVertex(Airport(code)));
     return res;
 }
+
+list<Vertex<Airport> *> Manager::getAirportsByName(string name) const {
+    list<Vertex<Airport> *> res;
+    for (Vertex<Airport> * vertex : network.getVertexSet()) {
+        if (vertex->getInfo().getName() == name) {
+            res.push_back(vertex);
+        }
+    }
+    return res;
+}
+
+list<Vertex<Airport> *> Manager::getAirportsByCity(string city, string country) const {
+    list<Vertex<Airport> *> res;
+    for (Vertex<Airport> * vertex : network.getVertexSet()) {
+        if (vertex->getInfo().getCity() == city and vertex->getInfo().getCountry() == country) {
+            res.push_back(vertex);
+        }
+    }
+    return res;
+}
+
+list<Vertex<Airport> *> Manager::getAirportsByCoordinates(double latitude, double longitude) const {
+    list<Vertex<Airport> *> res;
+    auto minDistance = DBL_MAX;
+    for (Vertex<Airport> * vertex : network.getVertexSet()) {
+        double distance = haversine(latitude, longitude, vertex->getInfo().getLatitude(), vertex->getInfo().getLongitude());
+        if (distance < minDistance) {
+            minDistance = distance;
+            res = {vertex};
+        } else if (distance == minDistance) {
+            res.push_back(vertex);
+        }
+    }
+    return res;
+}
+
+double Manager::haversine(double lat1, double lon1, double lat2, double lon2) {
+    // distance between latitudes
+    // and longitudes
+    double dLat = (lat2 - lat1) *
+                  M_PI / 180.0;
+    double dLon = (lon2 - lon1) *
+                  M_PI / 180.0;
+
+    // convert to radians
+    lat1 = (lat1) * M_PI / 180.0;
+    lat2 = (lat2) * M_PI / 180.0;
+
+    // apply formulae
+    double a = pow(sin(dLat / 2), 2) +
+               pow(sin(dLon / 2), 2) *
+               cos(lat1) * cos(lat2);
+    double rad = 6371;
+    double c = 2 * asin(sqrt(a));
+    return rad * c;
+}

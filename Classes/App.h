@@ -35,6 +35,9 @@ public:
     void getPath() const;
     list<Vertex<Airport>*> askForAirport() const;
     list<Vertex<Airport> *> getAirportsByCode() const;
+    list<Vertex<Airport> *> getAirportsByName() const;
+    list<Vertex<Airport> *> getAirportsByCity() const;
+    list<Vertex<Airport> *> getAirportsByCoordinates() const;
 
 private:
     /** @brief Manager object which keeps information about airlines and network*/

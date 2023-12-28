@@ -47,6 +47,7 @@ int App::menu() {
 
     // Check if option is valid
     while(!isValidOption(choice, 2)) {
+        cout << "\nYour option:";
         cin >> choice;
     }
     return choice;
@@ -74,6 +75,7 @@ bool App::statistics() const {
 
     // Check if option is valid
     while(!isValidOption(choice, 11)) {
+        cout << "\nYour option:";
         cin >> choice;
     }
 
@@ -131,6 +133,7 @@ bool App::scheduleFlight() const {
 
     // Check if option is valid
     while(!isValidOption(choice, 1)) {
+        cout << "\nYour option:";
         cin >> choice;
     }
 
@@ -294,7 +297,8 @@ list<Vertex<Airport>*> App::askForAirport() const {
     cout << endl;
 
     // Check if option is valid
-    while(!isValidOption(choice, 1)) {
+    while(!isValidOption(choice, 3)) {
+        cout << "\nYour option:";
         cin >> choice;
     }
 
@@ -302,6 +306,12 @@ list<Vertex<Airport>*> App::askForAirport() const {
     switch (choice) {
         case 0:
             return getAirportsByCode();
+        case 1:
+            return getAirportsByName();
+        case 2:
+            return getAirportsByCity();
+        case 3:
+            return getAirportsByCoordinates();
     }
 }
 
@@ -311,4 +321,34 @@ list<Vertex<Airport> *> App::getAirportsByCode() const {
     cin >> code;
 
     return information.getAirportsByCode(code);
+}
+
+list<Vertex<Airport> *> App::getAirportsByName() const {
+    cout << "Please insert wanted Airport name:";
+    string name;
+    cin >> name;
+
+    return information.getAirportsByName(name);
+}
+
+list<Vertex<Airport> *> App::getAirportsByCity() const {
+    cout << "Please insert wanted city name:";
+    string city;
+    cin >> city;
+    cout << "Please insert wanted country name to avoid misunderstandings:";
+    string country;
+    cin >> country;
+
+    return information.getAirportsByCity(city, country);
+}
+
+list<Vertex<Airport> *> App::getAirportsByCoordinates() const {
+    cout << "Please insert wanted latitude coordinate:";
+    double latitude;
+    cin >> latitude;
+    cout << "Please insert wanted longitude coordinate:";
+    double longitude;
+    cin >> longitude;
+
+    return information.getAirportsByCoordinates(latitude, longitude);
 }

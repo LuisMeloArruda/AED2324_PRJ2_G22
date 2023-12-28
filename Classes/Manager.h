@@ -4,9 +4,11 @@
 #include <set>
 #include <list>
 #include <queue>
+#include <cmath>
 #include <fstream>
-#include <iostream>
+#include <float.h>
 #include <sstream>
+#include <iostream>
 #include <algorithm>
 #include <unordered_set>
 #include "Airline.h"
@@ -54,8 +56,12 @@ public:
     void readFlights();
     int getMaximumDistance(Vertex<Airport>* sourceVertex, list<pair<string, string>>& trips) const;
     void dfs_art(Vertex<Airport>* v, unordered_set<string>& essentialAirports, unsigned int index) const;
-    list<Vertex<Airport> *> getAirportsByCode(string code) const;
     unsigned int getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<list<pair<string, string>>>& options) const;
+    list<Vertex<Airport> *> getAirportsByCode(string code) const;
+    list<Vertex<Airport> *> getAirportsByName(string name) const;
+    list<Vertex<Airport> *> getAirportsByCity(string city, string country) const;
+    list<Vertex<Airport> *> getAirportsByCoordinates(double latitude, double longitude) const;
+    static double haversine(double lat1, double lon1, double lat2, double lon2);
 };
 
 #endif //AED2324_PRJ2_G22_MANAGER_H
