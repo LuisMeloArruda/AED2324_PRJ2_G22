@@ -243,7 +243,7 @@ void App::checkCountriesCity() const {
 }
 
 /**
- * @see
+ * @see getDestinations(Airport airport);
  */
 void App::checkDestinations() const {
     cout << "Please insert wanted Airport code:";
