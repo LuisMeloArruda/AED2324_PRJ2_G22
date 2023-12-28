@@ -55,7 +55,7 @@ public:
     int getMaximumDistance(Vertex<Airport>* sourceVertex, list<pair<string, string>>& trips) const;
     void dfs_art(Vertex<Airport>* v, unordered_set<string>& essentialAirports, unsigned int index) const;
     list<Vertex<Airport> *> getAirportsByCode(string code) const;
-    unsigned int getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<pair<string, string>>& options) const;
+    unsigned int getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<list<pair<string, string>>>& options) const;
 };
 
 #endif //AED2324_PRJ2_G22_MANAGER_H

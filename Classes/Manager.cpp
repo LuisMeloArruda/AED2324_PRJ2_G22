@@ -609,53 +609,68 @@ void Manager::dfs_art(Vertex<Airport> *v, unordered_set<string>& essentialAirpor
 
 void Manager::getBestFlight(list<Vertex<Airport> *> sourceAirports, list<Vertex<Airport> *> targetAirports) const {
     unsigned int minimumPath = network.getVertexSet().size() + 1;
-    list<pair<string, string>> flightOptions;
+    list<list<pair<string, string>>> flightOptions;
 
     for (Vertex<Airport>* source : sourceAirports) {
         for (Vertex<Airport>* target : targetAirports) {
-            list<pair<string, string>> temp;
+            list<list<pair<string, string>>> temp;
             unsigned int currentPath = getMinimumPath(source, target, temp);
             if (currentPath < minimumPath) {
                 minimumPath = currentPath;
                 flightOptions = temp;
             } else if (currentPath == minimumPath) {
-                flightOptions.insert(flightOptions.end(), temp.begin(), temp.end());
+                flightOptions.splice(flightOptions.end(), temp);
             }
         }
     }
 
-    cout << "There are " << flightOptions.size() << " flights that only take " << minimumPath << " layovers" << endl;
-    for (pair<string, string> option : flightOptions) {
-        cout << option.first << " - " << option.second << endl;
+    cout << "There are " << flightOptions.size() << " flights that only take " << minimumPath << " layover(s)" << endl;
+    for (list<pair<string, string>> option : flightOptions) {
+        for (pair<string, string> flight : option) {
+            if (flight.second != "") cout << " -> " << flight.first << " (" << flight.second << ") ";
+            else cout << flight.first;
+        }
+        cout << endl;
     }
 }
 
-unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<pair<string, string>>& options) const {
+unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<list<pair<string, string>>>& options) const {
     unsigned int minimumPath = network.getVertexSet().size() + 1;
 
     for (Vertex<Airport>* vertex : network.getVertexSet()) {
         vertex->setVisited(false);
     }
 
-    queue<pair<Vertex<Airport>*, int>> vertexToVisit;
-    vertexToVisit.emplace(source, 0);
+    // Each element in the queue has a vertex and a pair with the current step information
+    // The information pair contains the number of the step and a list of flights taken from the source airport to get there
+    queue<pair<Vertex<Airport>*, pair<int, list<pair<string, string>>>>> vertexToVisit;
+    vertexToVisit.push({source, {0, {{source->getInfo().getCode(), ""}}}});
 
     while (!vertexToVisit.empty()) {
         Vertex<Airport>* currentVertex = vertexToVisit.front().first;
+        int currentStep = vertexToVisit.front().second.first;
+        if (currentStep > minimumPath) {
+            vertexToVisit.pop();
+            currentVertex->setVisited(true);
+            continue;
+        }
+        list<pair<string, string>> currentPath = vertexToVisit.front().second.second;
 
         if (currentVertex == target) {
-            if (vertexToVisit.front().second < minimumPath) {
-                minimumPath = vertexToVisit.front().second;
-                options = {{source->getInfo().getCode(), target->getInfo().getCode()}};
+            if (currentStep < minimumPath) {
+                minimumPath = currentStep;
+                options = {currentPath};
             }
-            else if (vertexToVisit.front().second == minimumPath) options.insert(options.end(), {source->getInfo().getCode(), target->getInfo().getCode()});
+            else if (currentStep == minimumPath) options.push_back(currentPath);
             vertexToVisit.pop();
             continue;
         }
 
         for (Edge<Airport> edge: currentVertex->getAdj()) {
             if (edge.getDest()->isVisited()) continue;
-            vertexToVisit.push({edge.getDest(), vertexToVisit.front().second + 1});
+            list<pair<string, string>> temp = currentPath;
+            temp.emplace_back(edge.getDest()->getInfo().getCode(), edge.getAirline());
+            vertexToVisit.push({edge.getDest(), {vertexToVisit.front().second.first + 1, temp}});
             if (edge.getDest() != target) edge.getDest()->setProcessing(true);
         }
 
