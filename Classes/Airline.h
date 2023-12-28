@@ -5,6 +5,9 @@
 
 using namespace std;
 
+/**
+ * @brief A class to keep the code, name, callSign and country of a airline
+ */
 class Airline {
 private:
     string code;

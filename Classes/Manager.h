@@ -20,7 +20,13 @@
  */
 class Manager {
 private:
+    /**
+     * @brief A set to store airlines
+     */
     set<Airline> airlines;
+    /**
+     * @brief A graph to keep airports
+     */
     Graph<Airport> network;
 public:
     Manager();

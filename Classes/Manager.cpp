@@ -579,6 +579,7 @@ void Manager::getEssentialAirports() const {
 
 /**
  * @brief Auxiliar Depth-first search to find essential airports
+ * @details Time complexity:
  * @param v
  * @param essentialAirports
  * @param index
@@ -607,6 +608,15 @@ void Manager::dfs_art(Vertex<Airport> *v, unordered_set<string>& essentialAirpor
     v->setProcessing(false);
 }
 
+/**
+ * @brief Print the optimal path between a specified starting airport and a target airport, considering optional filters
+ * @details Time complexity:
+ * @param sourceAirports
+ * @param targetAirports
+ * @param airlines
+ * @param minimumOn
+ * @see getMinimumPath();
+ */
 void Manager::getBestFlight(list<Vertex<Airport> *> sourceAirports, list<Vertex<Airport> *> targetAirports, list<string> airlines, bool minimumOn) const {
     unsigned int minimumPath = network.getVertexSet().size() + 1;
     list<list<pair<string, string>>> flightOptions;
@@ -660,6 +670,15 @@ void Manager::getBestFlight(list<Vertex<Airport> *> sourceAirports, list<Vertex<
     }
 }
 
+/**
+ * @brief Auxiliar breadth-first search
+ * @details Time complexity:
+ * @param source
+ * @param target
+ * @param options Path options
+ * @param airlines A list of user's preferred airlines
+ * @return The number of minimum path
+ */
 unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<list<pair<string, string>>>& options, list<string> airlines) const {
     unsigned int minimumPath = network.getVertexSet().size() + 1;
 
@@ -711,12 +730,24 @@ unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* t
     return minimumPath;
 }
 
+/**
+ * @brief Converts a airport code on a list of airport vertices.
+ * @details Time complexity:
+ * @param code
+ * @return A list of airport vertices
+ */
 list<Vertex<Airport> *> Manager::getAirportsByCode(string code) const {
     list<Vertex<Airport> *> res;
     res.insert(res.begin(), network.findVertex(Airport(code)));
     return res;
 }
 
+/**
+ * @brief Converts a airport name on a list of airport vertices.
+ * @details Time complexity:
+ * @param name
+ * @return A list of airport vertices.
+ */
 list<Vertex<Airport> *> Manager::getAirportsByName(string name) const {
     list<Vertex<Airport> *> res;
     for (Vertex<Airport> * vertex : network.getVertexSet()) {
@@ -727,6 +758,13 @@ list<Vertex<Airport> *> Manager::getAirportsByName(string name) const {
     return res;
 }
 
+/**
+ * @brief Converts a city and its country on a list of airport vertices.
+ * @details Time complexity:
+ * @param city
+ * @param country
+ * @return A list of airport vertices.
+ */
 list<Vertex<Airport> *> Manager::getAirportsByCity(string city, string country) const {
     list<Vertex<Airport> *> res;
     for (Vertex<Airport> * vertex : network.getVertexSet()) {
@@ -737,6 +775,13 @@ list<Vertex<Airport> *> Manager::getAirportsByCity(string city, string country) 
     return res;
 }
 
+/**
+ * @brief Converts latitude and longitude on a list of airport vertices.
+ * @details Time complexity:
+ * @param latitude
+ * @param longitude
+ * @return A list of airport vertices.
+ */
 list<Vertex<Airport> *> Manager::getAirportsByCoordinates(double latitude, double longitude) const {
     list<Vertex<Airport> *> res;
     auto minDistance = DBL_MAX;
@@ -752,6 +797,15 @@ list<Vertex<Airport> *> Manager::getAirportsByCoordinates(double latitude, doubl
     return res;
 }
 
+/**
+ * @brief Calculates distance between coordinates of latitude and longitude using Haversine Distance method
+ * @details Time complexity:
+ * @param lat1
+ * @param lon1
+ * @param lat2
+ * @param lon2
+ * @return Distance between coordinates of latitude and longitude
+ */
 double Manager::haversine(double lat1, double lon1, double lat2, double lon2) {
     // distance between latitudes
     // and longitudes

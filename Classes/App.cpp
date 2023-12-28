@@ -35,6 +35,10 @@ void App::run() {
     }
 }
 
+/**
+ * @brief Displays menu's options to the user
+ * @return The user's selected menu number.
+ */
 int App::menu() {
     int choice;
     // Print Menu
@@ -53,6 +57,10 @@ int App::menu() {
     return choice;
 }
 
+/**
+ * @brief Displays various statistical inquiries that the user can make
+ * @return true if the user selected a valid option, false otherwise.
+ */
 bool App::statistics() const {
     // Print Menu
     int choice;
@@ -120,6 +128,11 @@ bool App::statistics() const {
     return (choice == 0);
 }
 
+/**
+ * @brief Presenting the user with options to display his flight's path.
+ * @param minimumOn
+ * @return true if the user selected a valid option, false otherwise.
+ */
 bool App::scheduleFlight(bool minimumOn) const {
     // Print Menu
     int choice;
@@ -127,7 +140,7 @@ bool App::scheduleFlight(bool minimumOn) const {
             "\n0. Go Back"
             "\n1. Enable/Disable the minimum number of preferred airlines."
             "\n2. Without Filters"
-            "\n3. With Filters"
+            "\n3. With a preference for the airline of your choice."
             "\nYour option:";
     cin >> choice;
     cout << endl;
@@ -157,11 +170,18 @@ bool App::scheduleFlight(bool minimumOn) const {
     return (choice == 0);
 }
 
+/**
+ * @see getAirportNumber();
+ * @see getGlobalFlightNumber();
+ */
 void App::checkGlobal() const {
     cout << "GLOBAL NUMBER OS AIRPORTS: "  << information.getAirportNumber() << endl;
     cout << "GLOBAL NUMBER OF FLIGHTS: " << information.getGlobalFlightNumber() << endl;
 }
 
+/**
+ * @see getOutFlights(Airport airport);
+ */
 void App::checkOutFlights() const {
     cout << "Please insert wanted Airport code:";
     string code;
@@ -171,6 +191,9 @@ void App::checkOutFlights() const {
     information.getOutFlights(temp);
 }
 
+/**
+ * @see getFlightsInCity(string city, string country);
+ */
 void App::checkFlightsInCity() const {
     cout << "Please insert wanted City:";
     string city;
@@ -182,6 +205,9 @@ void App::checkFlightsInCity() const {
     information.getFlightsInCity(city, country);
 }
 
+/**
+ * @see getFlightsOfAirline(string airline);
+ */
 void App::checkFlightsOfAirline() const {
     cout << "Please insert wanted Airline code:";
     string airline;
@@ -190,6 +216,9 @@ void App::checkFlightsOfAirline() const {
     information.getFlightsOfAirline(airline);
 }
 
+/**
+ * @see getCountriesAirport(Airport airport);
+ */
 void App::checkCountriesAirport() const {
     cout << "Please insert wanted Airport code:";
     string code;
@@ -199,6 +228,9 @@ void App::checkCountriesAirport() const {
     information.getCountriesAirport(temp);
 }
 
+/**
+ * @see getCountriesCity(string city, string country);
+ */
 void App::checkCountriesCity() const {
     cout << "Please insert wanted City:";
     string city;
@@ -210,6 +242,9 @@ void App::checkCountriesCity() const {
     information.getCountriesCity(city, country);
 }
 
+/**
+ * @see
+ */
 void App::checkDestinations() const {
     cout << "Please insert wanted Airport code:";
     string code;
@@ -219,6 +254,9 @@ void App::checkDestinations() const {
     information.getDestinations(temp);
 }
 
+/**
+ * @see getReachableDestinations(const Airport &startAirport, int stops);
+ */
 void App::checkReachableDestinations() const {
     cout << "Please insert wanted Airport code:";
     string code;
@@ -230,11 +268,17 @@ void App::checkReachableDestinations() const {
     information.getReachableDestinations(temp, stops);
 };
 
+/**
+ * @see getDiameterPairs();
+ */
 void App::checkDiameter() const {
     cout << "Searching the network" << endl;
     information.getDiameterPairs();
 }
 
+/**
+ * @see getTopKAirport(const int& K);
+ */
 void App::checkTopKAirport() const {
     cout << "How many top airports do you want to retrieve? \n";
     int K;
@@ -248,6 +292,9 @@ void App::checkTopKAirport() const {
     }
 }
 
+/**
+ * @see getEssentialAirports();
+ */
 void App::checkEssentialAirports() const {
     information.getEssentialAirports();
 }
@@ -283,6 +330,11 @@ bool App::continueQuestion() {
     return false;
 }
 
+/**
+ *
+ * @param withFilters
+ * @param minimumOn
+ */
 void App::getPath(bool withFilters, bool minimumOn) const {
     list<Vertex<Airport>*> sourceAirports;
     list<Vertex<Airport>*> targetAirports;
@@ -299,6 +351,9 @@ void App::getPath(bool withFilters, bool minimumOn) const {
     airlines.clear();
 }
 
+/**
+ * @return A compilation of airlines preferred by the user.
+ */
 list<string> App::getFilters() const {
     list<string> airlines;
     cout << "Airline code:\n";
@@ -313,6 +368,14 @@ list<string> App::getFilters() const {
     return airlines;
 }
 
+/**
+ * @brief Presenting the user with various options for referencing the airport
+ * @return A list of airport vertices
+ * @see getAirportsByCode();
+ * @see getAirportsByName();
+ * @see getAirportsByCity();
+ * @see getAirportsByCoordinates();
+ */
 list<Vertex<Airport>*> App::askForAirport() const {
     int choice;
     cout << "\n0. Airport Code"
@@ -342,6 +405,11 @@ list<Vertex<Airport>*> App::askForAirport() const {
     }
 }
 
+/**
+ * @brief Request the user to provide the code to find a airport
+ * @return A list of airport vertices
+ * @see getAirportsByCode(string code);
+ */
 list<Vertex<Airport> *> App::getAirportsByCode() const {
     cout << "Please insert wanted Airport code:";
     string code;
@@ -350,6 +418,11 @@ list<Vertex<Airport> *> App::getAirportsByCode() const {
     return information.getAirportsByCode(code);
 }
 
+/**
+ * @brief Request the user to provide the name to find a airport
+ * @return A list of airport vertices
+ * @see getAirportsByName(string name);
+ */
 list<Vertex<Airport> *> App::getAirportsByName() const {
     cout << "Please insert wanted Airport name:";
     string name;
@@ -358,6 +431,11 @@ list<Vertex<Airport> *> App::getAirportsByName() const {
     return information.getAirportsByName(name);
 }
 
+/**
+ * @brief Request the user to provide the city and country to find airports
+ * @return A list of airport vertices
+ * @see getAirportsByCity(string city, string country);
+ */
 list<Vertex<Airport> *> App::getAirportsByCity() const {
     cout << "Please insert wanted city name:";
     string city;
@@ -369,6 +447,11 @@ list<Vertex<Airport> *> App::getAirportsByCity() const {
     return information.getAirportsByCity(city, country);
 }
 
+/**
+ * @brief Request the user to provide the latitude and longitude coordinates to find a airport
+ * @return A list of airport vertices
+ * @see getAirportsByCoordinates(double latitude, double longitude);
+ */
 list<Vertex<Airport> *> App::getAirportsByCoordinates() const {
     cout << "Please insert wanted latitude coordinate:";
     double latitude;

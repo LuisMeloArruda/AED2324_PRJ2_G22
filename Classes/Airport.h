@@ -5,6 +5,9 @@
 
 using namespace std;
 
+/**
+ * @brief A class which keeps the code, name, city, country, latitude and longitude of a airport
+ */
 class Airport {
 private:
     string code;
