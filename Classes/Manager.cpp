@@ -607,14 +607,14 @@ void Manager::dfs_art(Vertex<Airport> *v, unordered_set<string>& essentialAirpor
     v->setProcessing(false);
 }
 
-void Manager::getBestFlight(list<Vertex<Airport> *> sourceAirports, list<Vertex<Airport> *> targetAirports) const {
+void Manager::getBestFlight(list<Vertex<Airport> *> sourceAirports, list<Vertex<Airport> *> targetAirports, list<string> airlines, bool minimumOn) const {
     unsigned int minimumPath = network.getVertexSet().size() + 1;
     list<list<pair<string, string>>> flightOptions;
 
     for (Vertex<Airport>* source : sourceAirports) {
         for (Vertex<Airport>* target : targetAirports) {
             list<list<pair<string, string>>> temp;
-            unsigned int currentPath = getMinimumPath(source, target, temp);
+            unsigned int currentPath = getMinimumPath(source, target, temp, airlines);
             if (currentPath < minimumPath) {
                 minimumPath = currentPath;
                 flightOptions = temp;
@@ -624,17 +624,43 @@ void Manager::getBestFlight(list<Vertex<Airport> *> sourceAirports, list<Vertex<
         }
     }
 
-    cout << "There are " << flightOptions.size() << " flights that only take " << minimumPath << " layover(s)" << endl;
-    for (list<pair<string, string>> option : flightOptions) {
-        for (pair<string, string> flight : option) {
+    if (minimumOn) {
+        list<list<pair<string, string>>> minimumOptions;
+        unsigned int minAirlines = INT32_MAX;
+
+        for (list<pair<string, string>> option: flightOptions) {
+            list<pair<string, string>> currentMinimumOption;
+            unsigned int currentMinAirlines = 0;
+            set<string> currentAirlines;
+            for (pair<string, string> flight: option) {
+                currentMinimumOption.push_back(flight);
+                auto it = currentAirlines.insert(flight.second);
+                if (it.second) currentMinAirlines++;
+            }
+            if (currentMinAirlines < minAirlines) {
+                minAirlines = currentMinAirlines;
+                minimumOptions.clear();
+                minimumOptions.push_back(currentMinimumOption);
+            }
+            else if (currentMinAirlines == minAirlines) {
+                minimumOptions.push_back(currentMinimumOption);
+            }
+        }
+        flightOptions = minimumOptions;
+    }
+    cout << "There are " << flightOptions.size() << " flights that only take " << minimumPath << " layover(s)"
+        << endl;
+    for (list<pair<string, string>> option: flightOptions) {
+        for (pair<string, string> flight: option) {
             if (flight.second != "") cout << " -> " << flight.first << " (" << flight.second << ") ";
             else cout << flight.first;
         }
         cout << endl;
+
     }
 }
 
-unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<list<pair<string, string>>>& options) const {
+unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<list<pair<string, string>>>& options, list<string> airlines) const {
     unsigned int minimumPath = network.getVertexSet().size() + 1;
 
     for (Vertex<Airport>* vertex : network.getVertexSet()) {
@@ -668,6 +694,10 @@ unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* t
 
         for (Edge<Airport> edge: currentVertex->getAdj()) {
             if (edge.getDest()->isVisited()) continue;
+            if (airlines.size() >= 1) {
+                auto it = std::find(airlines.begin(), airlines.end(), edge.getAirline());
+                if (it == airlines.end()) continue;
+            }
             list<pair<string, string>> temp = currentPath;
             temp.emplace_back(edge.getDest()->getInfo().getCode(), edge.getAirline());
             vertexToVisit.push({edge.getDest(), {vertexToVisit.front().second.first + 1, temp}});

@@ -14,7 +14,7 @@ public:
     void run();
     static int menu();
     bool statistics() const;
-    bool scheduleFlight() const;
+    bool scheduleFlight(bool minimumOn) const;
 
     // Lookup functions
     void checkGlobal() const;
@@ -32,7 +32,8 @@ public:
     // Auxiliary Functions
     static bool isValidOption(int choice, int numberOfOptions);
     static bool continueQuestion();
-    void getPath() const;
+    void getPath(bool withFilters, bool minimumON) const;
+    list<string> getFilters() const;
     list<Vertex<Airport>*> askForAirport() const;
     list<Vertex<Airport> *> getAirportsByCode() const;
     list<Vertex<Airport> *> getAirportsByName() const;

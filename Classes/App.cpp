@@ -28,7 +28,7 @@ void App::run() {
                 if (continueQuestion()) return;
                 break;
             case 2:
-                if (scheduleFlight()) break;
+                if (scheduleFlight(false)) break;
                 if (continueQuestion()) return;
                 break;
         }
@@ -120,19 +120,20 @@ bool App::statistics() const {
     return (choice == 0);
 }
 
-bool App::scheduleFlight() const {
+bool App::scheduleFlight(bool minimumOn) const {
     // Print Menu
     int choice;
     cout << "\nChoose an option:"
             "\n0. Go Back"
-            "\n1. Without Filters"
-            "\n2. With Filters"
+            "\n1. Enable/Disable the minimum number of preferred airlines."
+            "\n2. Without Filters"
+            "\n3. With Filters"
             "\nYour option:";
     cin >> choice;
     cout << endl;
 
     // Check if option is valid
-    while(!isValidOption(choice, 1)) {
+    while(!isValidOption(choice, 3)) {
         cout << "\nYour option:";
         cin >> choice;
     }
@@ -142,7 +143,15 @@ bool App::scheduleFlight() const {
         case 0:
             break;
         case 1:
-            getPath();
+            if (minimumOn) scheduleFlight(false);
+            else scheduleFlight(true);
+            break;
+            break;
+        case 2:
+            getPath(false, minimumOn);
+            break;
+        case 3:
+            getPath(true, minimumOn);
             break;
     }
     return (choice == 0);
@@ -274,16 +283,34 @@ bool App::continueQuestion() {
     return false;
 }
 
-void App::getPath() const {
+void App::getPath(bool withFilters, bool minimumOn) const {
     list<Vertex<Airport>*> sourceAirports;
     list<Vertex<Airport>*> targetAirports;
+
+    list<string> airlines;
+    if (withFilters) airlines = getFilters();
 
     cout << "\nChose form of input for departure:";
     sourceAirports = askForAirport();
     cout << "\nChose form of input for arrival:";
     targetAirports = askForAirport();
 
-    information.getBestFlight(sourceAirports, targetAirports);
+    information.getBestFlight(sourceAirports, targetAirports, airlines, minimumOn);
+    airlines.clear();
+}
+
+list<string> App::getFilters() const {
+    list<string> airlines;
+    cout << "Airline code:\n";
+    string airline;
+    cin >> airline;
+    airlines.push_back(airline);
+    while (!continueQuestion()) {
+        cout << "Airline code:\n";
+        cin >> airline;
+        airlines.push_back(airline);
+    }
+    return airlines;
 }
 
 list<Vertex<Airport>*> App::askForAirport() const {

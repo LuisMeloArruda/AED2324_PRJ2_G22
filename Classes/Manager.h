@@ -46,7 +46,7 @@ public:
     void getDiameterPairs() const;
     void getTopKAirport(const int& K) const;
     void getEssentialAirports() const;
-    void getBestFlight(list<Vertex<Airport> *> list1, list<Vertex<Airport> *> list2) const;
+    void getBestFlight(list<Vertex<Airport> *> list1, list<Vertex<Airport> *> list2, list<string> airlines, bool minimumOn) const;
 
     // Auxiliary Functions
     void dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cityCount, int &countryCount,
@@ -56,7 +56,8 @@ public:
     void readFlights();
     int getMaximumDistance(Vertex<Airport>* sourceVertex, list<pair<string, string>>& trips) const;
     void dfs_art(Vertex<Airport>* v, unordered_set<string>& essentialAirports, unsigned int index) const;
-    unsigned int getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<list<pair<string, string>>>& options) const;
+    unsigned int getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* target, list<list<pair<string, string>>>& options,
+                                list<string> airlines) const;
     list<Vertex<Airport> *> getAirportsByCode(string code) const;
     list<Vertex<Airport> *> getAirportsByName(string name) const;
     list<Vertex<Airport> *> getAirportsByCity(string city, string country) const;
