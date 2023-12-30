@@ -213,6 +213,8 @@ void App::checkFlightsOfAirline() const {
     string airline;
     cin >> airline;
 
+
+
     information.getFlightsOfAirline(airline);
 }
 

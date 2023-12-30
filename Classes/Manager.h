@@ -49,7 +49,7 @@ public:
 
     // Auxiliary Functions
     void dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cityCount, int &countryCount,
-                            unordered_set<string> &airports, set<pair<string, string>> &cities, unordered_set<string> &countries) const;
+                            unordered_set<string> &airports, unordered_set<string> &cities, unordered_set<string> &countries) const;
     void readAirlines();
     void readAirports();
     void readFlights();

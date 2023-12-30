@@ -22,7 +22,8 @@ void Manager::readFiles() {
 
 /**
  * @brief Read the "airlines.csv" file and fills Manager's airlines with code, name, callSign and country.
- * @details Time complexity:
+ * @details Time complexity: O(n * log m) where n the number of lines of the
+ * file airlines.csv and m the number of entries in the set airline
  */
 void Manager::readAirlines() {
     fstream  file("../data/airlines.csv");
@@ -51,7 +52,8 @@ void Manager::readAirlines() {
 
 /**
  * @brief Read the "airports.csv" file and fills Manager's network with code, name, city, country, latitude, longitude.
- * @details Time complexity:
+ * @details Time complexity: O(n * V) where n is the number of lines of the file airports.csv and V is the number of
+ * vertices in the graph
  */
 void Manager::readAirports() {
     fstream  file("../data/airports.csv");
@@ -88,7 +90,8 @@ void Manager::readAirports() {
 
 /**
  * @brief Read the "flights.csv" file and fill each Manager's network vertex with edges.
- * @details Time complexity:
+ * @details Time complexity: O(n * 2V) where n is the number of lines in flights.csv
+ * and V is the number of vertices in the graph
  */
 void Manager::readFlights() {
     fstream  file("../data/flights.csv");
@@ -152,8 +155,9 @@ int Manager::getGlobalFlightNumber() const {
 }
 
 /**
- * @brief Search for outbound flights from a specified airport.
- * @details Time complexity:
+ * @brief Search for outbound flights from a specified airport and see how many different airlines those flights use.
+ * @details Time complexity: O(V * e) where V is the number of vertices in the graph
+ * and e is the number of out edges of that vertex (assuming average case for the unordered_set insert operation).
  * @param airport The airport where we will search for outbound flights.
  */
 void Manager::getOutFlights(Airport airport) const {
@@ -177,7 +181,8 @@ void Manager::getOutFlights(Airport airport) const {
 
 /**
  * @brief Search for inbound and outbounds flights to a specified city.
- * @details Time complexity:
+ * @details Time complexity: O(V + E) where V is the number of vertices of the graph
+ * and E is the number of edges of the graph
  * @param city The city where we will search for flights passing through it
  * @param country The country to avoid ambiguous searches
  */
@@ -203,7 +208,8 @@ void Manager::getFlightsInCity(string city, string country) const {
 
 /**
  * @brief Provides the number of flights by a specified airline.
- * @details Time complexity:
+ * @details Time complexity: O(V + E) where V is the number of vertices of the graph
+ * and E is the number of edges of the graph
  * @param airline The airline where we will search for flights.
  */
 void Manager::getFlightsOfAirline(string airline) const {
@@ -220,7 +226,8 @@ void Manager::getFlightsOfAirline(string airline) const {
 
 /**
  * @brief Provides the number of countries by a specified airport.
- * @details Time complexity:
+ * @details Time complexity: O(V + e) where V is the number of vertices in the graph
+ * and e is the number of out edges of that vertex (assuming average case for the unordered_set insert operation).
  * @param airport The airport where we will search for countries.
  */
 void Manager::getCountriesAirport(Airport airport) const {
@@ -243,7 +250,8 @@ void Manager::getCountriesAirport(Airport airport) const {
 
 /**
  * @brief Provides the number of countries by a specified city.
- * @details Time complexity:
+ * @details Time complexity: O(V + E) where V is the number of vertices of the graph
+ * and E is the number of edges of the graph (assuming average case for the unordered_set insert operation).
  * @param city
  * @param country
  */
@@ -263,8 +271,9 @@ void Manager::getCountriesCity(string city, string country) const {
 }
 
 /**
- * @brief Auxiliar depth-first search to count the number of airports, cities and countries for a vertice.
- * @details Time complexity:
+ * @brief Auxiliar depth-first search to count the number of airports, cities and countries for a vertex.
+ * @details Time complexity: O(V + E) where V is the number of vertices in the graph and E
+ * is the number of edges in the graph (assuming average case for the unordered_set insert operation).
  * @param v
  * @param airportCount
  * @param cityCount
@@ -274,17 +283,16 @@ void Manager::getCountriesCity(string city, string country) const {
  * @param countries
  */
 void Manager::dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cityCount, int &countryCount,
-                                 unordered_set<string> &airports, set<pair<string, string>> &cities, unordered_set<string> &countries) const {
+                                 unordered_set<string> &airports, unordered_set<string> &cities, unordered_set<string> &countries) const {
     v->setVisited(true);
     for (Edge<Airport> edge : v->getAdj()) {
         auto airportIt = airports.insert(edge.getDest()->getInfo().getCode());
-        pair<string, string> aux = make_pair(edge.getDest()->getInfo().getCity(), edge.getDest()->getInfo().getCountry());
-        auto cityIt = cities.insert(aux);
+        auto cityIt = cities.insert(edge.getDest()->getInfo().getCity() + edge.getDest()->getInfo().getCountry());
         auto countryIt = countries.insert(edge.getDest()->getInfo().getCountry());
 
         if(airportIt.second)  {
             airportCount++;
-            Vertex<Airport>* w = network.findVertex(edge.getDest()->getInfo());
+            Vertex<Airport>* w = edge.getDest();
             if (!w->isVisited()) dfsGetDestinations(w, airportCount, cityCount, countryCount,
                                                     airports, cities, countries);
         }
@@ -295,22 +303,25 @@ void Manager::dfsGetDestinations(Vertex<Airport> *v, int &airportCount, int &cit
 
 /**
  * @brief Method to count the number of airports, cities and countries for a given airport.
- * @details Time complexity:
+ * @details Time complexity: O(V + V + E) where V is the number of vertices in the graph and E
+ * is the number of edges in the graph (assuming average case for the unordered_set insert operation).
  * @param airport Given airport
  * @see dfsGetDestinations()
  */
 void Manager::getDestinations(Airport airport) const {
-    Vertex<Airport>* airportPtr = network.findVertex(airport);
+    Vertex<Airport>* airportPtr = NULL;
+    for (Vertex<Airport> *v : network.getVertexSet()) {
+        if (v->getInfo().getCode() == airport.getCode()) airportPtr = v;
+        v->setVisited(false);
+    }
+
     if (airportPtr == NULL) {
         cout << "Airport Code not found/valid" << endl;
         return;
     }
-    for (Vertex<Airport> *v : network.getVertexSet()) {
-        v->setVisited(false);
-    }
 
     unordered_set<string> airports;
-    set<pair<string, string>> cities;
+    unordered_set<string> cities;
     unordered_set<string> countries;
     int airportCount = 0, cityCount = 0, countryCount = 0;
 
@@ -327,21 +338,27 @@ void Manager::getDestinations(Airport airport) const {
 
 /**
  * @brief A method to count the number of airports, cities, and countries for a given airport within a limit
- * @details Time complexity:
+ * @details Time complexity: O(V + V + E) where V is the number of vertices in the graph and E
+ * is the number of edges in the graph (assuming average case for the unordered_set insert operation).
  * @param startAirport Given airport
  * @param stops limit
  */
 void Manager::getReachableDestinations(const Airport &startAirport, int stops) const {
-    Vertex<Airport>* sourceVertex;
+    Vertex<Airport>* sourceVertex = NULL;
 
     // Initialize sets to keep track of visited airports, cities, and countries
     unordered_set<string> visitedAirports;
-    set<pair<string, string>> visitedCities;
+    unordered_set<string> visitedCities;
     unordered_set<string> visitedCountries;
 
     for (Vertex<Airport>* vertex : network.getVertexSet()) {
         vertex->setVisited(false);
         if (vertex->getInfo() == startAirport) sourceVertex = vertex;
+    }
+
+    if (sourceVertex == NULL) {
+        cout << "Airport Code not found/valid" << endl;
+        return;
     }
 
     queue<pair<Vertex<Airport>*, int>> vertexToVisit;
@@ -357,7 +374,7 @@ void Manager::getReachableDestinations(const Airport &startAirport, int stops) c
         // Mark node as visited and add to visited sets
         vertexToVisit.front().first->setVisited(true);
         visitedAirports.insert(currentVertex->getInfo().getCode());
-        visitedCities.insert(make_pair(currentVertex->getInfo().getCity(), currentVertex->getInfo().getCountry()));
+        visitedCities.insert(currentVertex->getInfo().getCity() + currentVertex->getInfo().getCountry());
         visitedCountries.insert(currentVertex->getInfo().getCountry());
         // If node is last stop then don't add its adjacent to queue
         if (vertexToVisit.front().second == 0) {
@@ -383,7 +400,8 @@ void Manager::getReachableDestinations(const Airport &startAirport, int stops) c
 
 /**
  * @brief Prints the maximum trip and corresponding pair of source-destination airports
- * @details Time complexity:
+ * @details Time complexity: O(V * (V + V + E)) where V is the number of vertices in the graph and E
+ * is the number of edges in the graph.
  * @see getMaximumDistance();
  */
 void Manager::getDiameterPairs() const {
@@ -412,7 +430,8 @@ void Manager::getDiameterPairs() const {
 
 /**
  * @brief Auxiliar breadth-First Search
- * @details Time complexity:
+ * @details Time complexity: O(V + V + E) where V is the number of vertices in the graph and E
+ * is the number of edges in the graph.
  * @param sourceVertex,trips A vertex and pair of source-destination airports
  * @return The number of maximum distance for a vertex
  */
@@ -455,7 +474,7 @@ int Manager::getMaximumDistance(Vertex<Airport> *sourceVertex, list<pair<string,
 
 /**
  * @brief Method that Identify the top-k airport with the greatest air traffic capacity
- * @details Time complexity:
+ * @details Time complexity: O(V + V * log V) where V is the number of vertices in the graph.
  * @param K
  */
 void Manager::getTopKAirport(const int& K) const {
@@ -488,7 +507,8 @@ void Manager::getTopKAirport(const int& K) const {
 
 /**
  * @brief Prints the amount of essential airports (articulation vertices) and their names
- * @details Time complexity:
+ * @details Time complexity: O((V + E) + (V + E) + (E * n)) where V is the number of vertices in the graph,
+ * E is the number of edges in the graph and n is the number of edges of the the vertex whose temporary edge is being removed
  * @see dfs_art();
  */
 void Manager::getEssentialAirports() {
@@ -529,7 +549,8 @@ void Manager::getEssentialAirports() {
 
 /**
  * @brief Auxiliar Depth-first search to find essential airports
- * @details Time complexity:
+ * @details Time complexity: O(V + E) where V is the number of vertices in the graph
+ * and E is the number of edges in the graph
  * @param v
  * @param essentialAirports
  * @param index
@@ -622,7 +643,9 @@ void Manager::getBestFlight(list<Vertex<Airport> *> sourceAirports, list<Vertex<
 
 /**
  * @brief Auxiliar breadth-first search
- * @details Time complexity:
+ * @details Time complexity: O(V²) where V is the number of vertices in the graph.
+ * The worst case scenario is the one where the algorithm explores every possible path, in that case we would have a dense graph
+ * where E approaches V(V-1), meaning the O(V + E) algorithm could be seen as O(V²).
  * @param source
  * @param target
  * @param options Path options
@@ -682,19 +705,19 @@ unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* t
 
 /**
  * @brief Converts a airport code on a list of airport vertices.
- * @details Time complexity:
+ * @details Time complexity: O(V) where V is the number of vertices in the graph
  * @param code
  * @return A list of airport vertices
  */
 list<Vertex<Airport> *> Manager::getAirportsByCode(string code) const {
     list<Vertex<Airport> *> res;
-    res.insert(res.begin(), network.findVertex(Airport(code)));
+    res.push_back(network.findVertex(Airport(code)));
     return res;
 }
 
 /**
  * @brief Converts a airport name on a list of airport vertices.
- * @details Time complexity:
+ * @details Time complexity: O(V) where V is the number of vertices in the graph
  * @param name
  * @return A list of airport vertices.
  */
@@ -710,7 +733,7 @@ list<Vertex<Airport> *> Manager::getAirportsByName(string name) const {
 
 /**
  * @brief Converts a city and its country on a list of airport vertices.
- * @details Time complexity:
+ * @details Time complexity: O(V) where V is the number of vertices in the graph
  * @param city
  * @param country
  * @return A list of airport vertices.
@@ -727,7 +750,7 @@ list<Vertex<Airport> *> Manager::getAirportsByCity(string city, string country) 
 
 /**
  * @brief Converts latitude and longitude on a list of airport vertices.
- * @details Time complexity:
+ * @details Time complexity: O(V) where V is the number of vertices in the graph
  * @param latitude
  * @param longitude
  * @return A list of airport vertices.
@@ -749,7 +772,7 @@ list<Vertex<Airport> *> Manager::getAirportsByCoordinates(double latitude, doubl
 
 /**
  * @brief Calculates distance between coordinates of latitude and longitude using Haversine Distance method
- * @details Time complexity:
+ * @details Time complexity: O(1)
  * @param lat1
  * @param lon1
  * @param lat2
