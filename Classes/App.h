@@ -13,7 +13,7 @@ public:
     // Display functions
     void run();
     static int menu();
-    bool statistics() const;
+    bool statistics();
     bool scheduleFlight(bool minimumOn) const;
 
     // Lookup functions
@@ -27,7 +27,7 @@ public:
     void checkReachableDestinations() const;
     void checkDiameter() const;
     void checkTopKAirport() const;
-    void checkEssentialAirports() const;
+    void checkEssentialAirports();
 
     // Auxiliary Functions
     static bool isValidOption(int choice, int numberOfOptions);

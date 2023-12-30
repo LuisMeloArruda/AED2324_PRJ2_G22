@@ -31,6 +31,7 @@ class Vertex {
     int low;               // auxiliary field
     void addEdge(Vertex<T> *dest, string airline);
     bool removeEdgeTo(Vertex<T> *d);
+    bool removeTemporaryEdgeTo(Vertex<T> *d);
 public:
     Vertex(T in);
     T getInfo() const;
@@ -86,6 +87,7 @@ public:
     bool addEdge(const T &sourc, const T &dest, string airline);
     bool addEdge(Vertex<T>* sourc, Vertex<T>* dest, string airline);
     bool removeEdge(const T &sourc, const T &dest);
+    bool removeTemporaryEdge(Vertex<T>* sourc, Vertex<T>* dest);
     vector<Vertex<T> * > getVertexSet() const;
 };
 
@@ -281,6 +283,18 @@ bool Graph<T>::removeEdge(const T &sourc, const T &dest) {
 }
 
 /**
+ * @brief Removes a temporary edge from a graph (this).
+ * The edge is identified by the source (sourc) and destination (dest) vertices.
+ * @returns True if successful, and false if such edge does not exist.
+ */
+template <class T>
+bool Graph<T>::removeTemporaryEdge(Vertex<T>* sourc, Vertex<T>* dest) {
+    if (sourc == NULL || dest == NULL)
+        return false;
+    return sourc->removeTemporaryEdgeTo(dest);
+}
+
+/**
  * @brief Auxiliary function to remove an outgoing edge (with a given destination (d)) from a vertex (this).
  * @returns True if successful, and false if such edge does not exist.
  */
@@ -288,6 +302,20 @@ template <class T>
 bool Vertex<T>::removeEdgeTo(Vertex<T> *d) {
     for (auto it = adj.begin(); it != adj.end(); it++)
         if (it->dest  == d) {
+            adj.erase(it);
+            return true;
+        }
+    return false;
+}
+
+/**
+ * @brief Auxiliary function to remove an outgoing edge (with a given destination (d) and with airline set to an empty string) from a vertex (this).
+ * @returns True if successful, and false if such edge does not exist.
+ */
+template <class T>
+bool Vertex<T>::removeTemporaryEdgeTo(Vertex<T> *d) {
+    for (auto it = adj.begin(); it != adj.end(); it++)
+        if (it->dest  == d and it->airline == "") {
             adj.erase(it);
             return true;
         }

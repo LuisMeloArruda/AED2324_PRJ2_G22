@@ -381,69 +381,6 @@ void Manager::getReachableDestinations(const Airport &startAirport, int stops) c
     cout << "Countries: " << visitedCountries.size() << endl;
 }
 
-/*void Manager::getReachableDestinations(const Airport& startAirport, int maxStops) const {
-    // Find the starting vertex in the graph using the provided airport information
-    Vertex<Airport>* startVertex = network.findVertex(startAirport);
-
-    // Set all nodes as unvisited
-    for (Vertex<Airport>* vertex : network.getVertexSet()) {
-        vertex->setVisited(false);
-    }
-
-    // Check if the starting airport is found in the graph
-    if (startVertex == nullptr) {
-        cout << "Airport Code not found/valid" << endl;
-        return;
-    }
-
-    // Initialize sets to keep track of visited airports, cities, and countries
-    unordered_set<string> visitedAirports;
-    unordered_set<string> visitedCities;
-    unordered_set<string> visitedCountries;
-
-    // Perform DFS to find reachable destinations with the given maximum stops
-    dfsReachableDestinations(startVertex, maxStops, 0, visitedAirports, visitedCities, visitedCountries);
-
-    // Display the results
-    cout << "Reachable destinations from "
-         << startAirport.getCode()
-         << " with a maximum of "
-         << maxStops << " stop(s):" << endl;
-
-    cout << "Airports: " << visitedAirports.size() << endl;
-    cout << "Cities: " << visitedCities.size() << endl;
-    cout << "Countries: " << visitedCountries.size() << endl;
-}
-
-void Manager::dfsReachableDestinations(Vertex<Airport>* currentVertex,
-                                       int maxStops, int currentStops,
-                                       unordered_set<string>& visitedAirports,
-                                       unordered_set<string>& visitedCities,
-                                       unordered_set<string>& visitedCountries) const {
-
-    // Mark the current airport, city, and country as visited
-    currentVertex->setVisited(true);
-    visitedAirports.insert(currentVertex->getInfo().getCode());
-    visitedCities.insert(currentVertex->getInfo().getCity());
-    visitedCountries.insert(currentVertex->getInfo().getCountry());
-
-    // Base case: If the maximum stops are reached, stop the recursion
-    if (currentStops == maxStops) {
-        return;
-    }
-
-    // Explore neighboring airports recursively
-    for (const Edge<Airport>& edge : currentVertex->getAdj()) {
-        Vertex<Airport>* neighborVertex = edge.getDest();
-
-        // Check if the neighbor airport is not visited to avoid cycles
-        if (!neighborVertex->isVisited()) {
-            dfsReachableDestinations(neighborVertex, maxStops, currentStops + 1,
-                                     visitedAirports, visitedCities, visitedCountries);
-        }
-    }
-}*/
-
 /**
  * @brief Prints the maximum trip and corresponding pair of source-destination airports
  * @details Time complexity:
@@ -554,13 +491,20 @@ void Manager::getTopKAirport(const int& K) const {
  * @details Time complexity:
  * @see dfs_art();
  */
-void Manager::getEssentialAirports() const {
+void Manager::getEssentialAirports() {
     unsigned int index = 1;
     unordered_set<string> essentialAirports;
+    queue<pair<Vertex<Airport>*, Vertex<Airport>*>> addedEdges;
 
     for (Vertex<Airport>* vertex : network.getVertexSet()) {
         vertex->setVisited(false);
         vertex->setProcessing(false);
+        for (Edge<Airport> edge : vertex->getAdj()) {
+            Vertex<Airport>* w = edge.getDest();
+            if (network.addEdge(w, vertex, "")) {
+                addedEdges.emplace(w, vertex);
+            }
+        }
     }
 
     for (Vertex<Airport>* v : network.getVertexSet()) {
@@ -575,6 +519,12 @@ void Manager::getEssentialAirports() const {
         cout << "- " << e << endl;
     }
     cout << "There are a total of " << essentialAirports.size() << " essential airports in the network" << endl;
+
+    while (!addedEdges.empty()) {
+        pair<Vertex<Airport>*, Vertex<Airport>*> currentPair = addedEdges.front();
+        addedEdges.pop();
+        if (!network.removeTemporaryEdge(currentPair.first, currentPair.second)) cout << "Temporary Edge could not be removed" << endl;
+    }
 }
 
 /**
@@ -694,7 +644,8 @@ unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* t
     while (!vertexToVisit.empty()) {
         Vertex<Airport>* currentVertex = vertexToVisit.front().first;
         int currentStep = vertexToVisit.front().second.first;
-        if (currentStep > minimumPath) {
+        if (currentStep > minimumPath) break;
+        if (currentStep == minimumPath and currentVertex != target) {
             vertexToVisit.pop();
             currentVertex->setVisited(true);
             continue;
@@ -720,7 +671,6 @@ unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* t
             list<pair<string, string>> temp = currentPath;
             temp.emplace_back(edge.getDest()->getInfo().getCode(), edge.getAirline());
             vertexToVisit.push({edge.getDest(), {vertexToVisit.front().second.first + 1, temp}});
-            if (edge.getDest() != target) edge.getDest()->setProcessing(true);
         }
 
         vertexToVisit.pop();

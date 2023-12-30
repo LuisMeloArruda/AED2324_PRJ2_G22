@@ -5,8 +5,8 @@
 #include <list>
 #include <queue>
 #include <cmath>
+#include <cfloat>
 #include <fstream>
-#include <float.h>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
@@ -42,16 +42,9 @@ public:
     void getCountriesCity(string city, string country) const;
     void getDestinations(Airport airport) const;
     void getReachableDestinations(const Airport &startAirport, int stops) const;
-    /*void dfsReachableDestinations(
-            Vertex<Airport>* currentVertex,
-            int maxStops, int currentStops,
-            unordered_set<string>& visitedAirports,
-            unordered_set<string>& visitedCities,
-            unordered_set<string>& visitedCountries
-    ) const;*/
     void getDiameterPairs() const;
     void getTopKAirport(const int& K) const;
-    void getEssentialAirports() const;
+    void getEssentialAirports();
     void getBestFlight(list<Vertex<Airport> *> list1, list<Vertex<Airport> *> list2, list<string> airlines, bool minimumOn) const;
 
     // Auxiliary Functions

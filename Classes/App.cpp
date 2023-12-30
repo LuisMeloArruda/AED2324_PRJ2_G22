@@ -61,7 +61,7 @@ int App::menu() {
  * @brief Displays various statistical inquiries that the user can make
  * @return true if the user selected a valid option, false otherwise.
  */
-bool App::statistics() const {
+bool App::statistics() {
     // Print Menu
     int choice;
     cout << "\nChoose an option:"
@@ -158,7 +158,6 @@ bool App::scheduleFlight(bool minimumOn) const {
         case 1:
             if (minimumOn) scheduleFlight(false);
             else scheduleFlight(true);
-            break;
             break;
         case 2:
             getPath(false, minimumOn);
@@ -295,7 +294,7 @@ void App::checkTopKAirport() const {
 /**
  * @see getEssentialAirports();
  */
-void App::checkEssentialAirports() const {
+void App::checkEssentialAirports() {
     information.getEssentialAirports();
 }
 
@@ -323,7 +322,7 @@ bool App::isValidOption(int choice, int numberOfOptions) {
  * @return true if the user wants to end the program, false otherwise
  */
 bool App::continueQuestion() {
-    cout << "\nWanna Continue? [Y/N]: ";
+    cout << "\nWant to Continue? [Y/N]: ";
     string answer;
     cin >> answer;
     if (answer == "N" || answer == "n") return true;
