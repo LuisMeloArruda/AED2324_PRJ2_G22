@@ -665,7 +665,7 @@ unsigned int Manager::getMinimumPath(Vertex<Airport>* source, Vertex<Airport>* t
         for (Edge<Airport> edge: currentVertex->getAdj()) {
             if (edge.getDest()->isVisited()) continue;
             if (airlines.size() >= 1) {
-                auto it = std::find(airlines.begin(), airlines.end(), edge.getAirline());
+                auto it = find(airlines.begin(), airlines.end(), edge.getAirline());
                 if (it == airlines.end()) continue;
             }
             list<pair<string, string>> temp = currentPath;

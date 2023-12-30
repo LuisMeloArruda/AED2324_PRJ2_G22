@@ -25,11 +25,11 @@ void App::run() {
                 return;
             case 1:
                 if (statistics()) break;
-                if (continueQuestion()) return;
+                if (continueQuestion("Want to continue?")) return;
                 break;
             case 2:
                 if (scheduleFlight(false)) break;
-                if (continueQuestion()) return;
+                if (continueQuestion("Want to continue?")) return;
                 break;
         }
     }
@@ -136,7 +136,8 @@ bool App::statistics() {
 bool App::scheduleFlight(bool minimumOn) const {
     // Print Menu
     int choice;
-    cout << "\nChoose an option:"
+    cout << "\nMinimum number of preferred airlines: " << (minimumOn ? "ENABLED" : "DISABLED")
+         << "\nChoose an option:"
             "\n0. Go Back"
             "\n1. Enable/Disable the minimum number of preferred airlines."
             "\n2. Without Filters"
@@ -321,8 +322,8 @@ bool App::isValidOption(int choice, int numberOfOptions) {
  * @details Time complexity: O(1)
  * @return true if the user wants to end the program, false otherwise
  */
-bool App::continueQuestion() {
-    cout << "\nWant to Continue? [Y/N]: ";
+bool App::continueQuestion(string question) {
+    cout << "\n" << question << " [Y/N]: ";
     string answer;
     cin >> answer;
     if (answer == "N" || answer == "n") return true;
@@ -355,12 +356,12 @@ void App::getPath(bool withFilters, bool minimumOn) const {
  */
 list<string> App::getFilters() const {
     list<string> airlines;
-    cout << "Airline code:\n";
+    cout << "Airline code:";
     string airline;
     cin >> airline;
     airlines.push_back(airline);
-    while (!continueQuestion()) {
-        cout << "Airline code:\n";
+    while (!continueQuestion("Would you like to add more airlines to your preferences?")) {
+        cout << "Airline code:";
         cin >> airline;
         airlines.push_back(airline);
     }

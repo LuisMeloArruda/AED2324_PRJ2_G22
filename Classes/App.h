@@ -31,7 +31,7 @@ public:
 
     // Auxiliary Functions
     static bool isValidOption(int choice, int numberOfOptions);
-    static bool continueQuestion();
+    static bool continueQuestion(string question);
     void getPath(bool withFilters, bool minimumON) const;
     list<string> getFilters() const;
     list<Vertex<Airport>*> askForAirport() const;
