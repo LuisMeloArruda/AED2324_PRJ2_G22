@@ -156,7 +156,7 @@ int Manager::getGlobalFlightNumber() const {
 
 /**
  * @brief Search for outbound flights from a specified airport and see how many different airlines those flights use.
- * @details Time complexity: O(V * e) where V is the number of vertices in the graph
+ * @details Time complexity: O(V + e) where V is the number of vertices in the graph
  * and e is the number of out edges of that vertex (assuming average case for the unordered_set insert operation).
  * @param airport The airport where we will search for outbound flights.
  */
