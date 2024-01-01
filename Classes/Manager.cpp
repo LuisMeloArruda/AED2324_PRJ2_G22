@@ -581,7 +581,8 @@ void Manager::dfs_art(Vertex<Airport> *v, unordered_set<string>& essentialAirpor
 
 /**
  * @brief Print the optimal path between a specified starting airport and a target airport, considering optional filters
- * @details Time complexity:
+ * @details Time complexity: O(S * T * V²) where S is the number of source airports, T is the number of target airports
+ * and V is the number of vertices in the graph.
  * @param sourceAirports
  * @param targetAirports
  * @param airlines
