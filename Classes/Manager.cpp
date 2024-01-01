@@ -366,7 +366,7 @@ void Manager::getReachableDestinations(const Airport &startAirport, int stops) c
 
     while (!vertexToVisit.empty()) {
         Vertex<Airport>* currentVertex = vertexToVisit.front().first;
-        // If node has alredy been visited then skip it
+        // If node has already been visited then skip it
         if (currentVertex->isVisited()) {
             vertexToVisit.pop();
             continue;
